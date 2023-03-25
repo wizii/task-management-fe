@@ -19,7 +19,7 @@ interface SideBarProps {
 }
 
 export function SideBar(props: SideBarProps) {
-    const boardCount = props.boards.length; 
+    const boardCount = props.boards?.length ?? 0; 
     return (
         <div className={styles.sidebar}>
             <div className={styles.logo}>
