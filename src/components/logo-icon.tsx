@@ -1,4 +1,4 @@
-import styles from '../styles/logo-icon.module.css';
+import styles from '../styles/logo-icon.module.scss';
 
 interface LogoIconProps {
     theme: 'light' | 'dark';

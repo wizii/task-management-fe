@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import styles from '../styles/toggle-button.module.css';
+import styles from '@/styles/toggle-button.module.scss';
 
 export function ToggleButton() {
     const [isToggled, toggle] = useState(false);

@@ -1,4 +1,4 @@
-import styles from '../styles/board-header.module.css';
+import styles from '../styles/board-header.module.scss';
 
 interface HeaderProps {
     boardName: string;
