@@ -8,6 +8,7 @@ interface ColumnProps {
     key: string;
     color: string;
     name: string;
+    handleOpenTask: () => void;
 }
 
 export function Column(props: ColumnProps) {
@@ -28,7 +29,7 @@ export function Column(props: ColumnProps) {
                 <div className={`${styles.columnName} ${styles[columnColorModifier]}`}>{props.name}</div>
                 {
                     tasks.map(task => (
-                        <TaskCard key={task.name} name={task.name} subtasks={task.subtasks}></TaskCard>
+                        <TaskCard key={task.name} name={task.name} subtasks={task.subtasks} handleOpenTask={props.handleOpenTask}></TaskCard>
                     ))
                 }
             </div>

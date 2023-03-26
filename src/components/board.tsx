@@ -8,6 +8,7 @@ import { Column as ColumnModel } from '../lib/models/column';
 interface BoardProps {
     name: string;
     columns: ColumnModel[];
+    handleOpenTask: () => void;
 }
 
 export function Board(props: BoardProps) {
@@ -15,7 +16,7 @@ export function Board(props: BoardProps) {
         <div className={styles.board}>
             {
                 props.columns.map(column => (
-                    <Column key={column.name} name={column.name} color={column.color}></Column>
+                    <Column key={column.name} name={column.name} color={column.color} handleOpenTask={props.handleOpenTask}></Column>
                 ))
             }   
 

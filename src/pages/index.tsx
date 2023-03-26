@@ -4,7 +4,7 @@ import { SideBar } from '../components/side-bar';
 import { BoardHeader } from '../components/board-header';
 import { Board } from '../components/board';
 import Modal from '../components/modal';
-import { useEffect, useState } from 'react';
+import { FormEvent, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 import AddTaskModal from '@/components/add-task-modal';
 import { Column } from '@/lib/models/column';
@@ -21,7 +21,8 @@ export default function Home() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [taskModal, setTaskModal] = useState<ReactNode>();
 
 
   useEffect(() => {
@@ -49,13 +50,26 @@ export default function Home() {
     setIsOpen(true);
   }
 
-  async function createTask(e: Event) {
-    e.preventDefault()
-    let form = e.target as HTMLFormElement;
-    let formData = new FormData(form);
-    let formJson = serializeTaskData(Object.fromEntries(formData.entries()));
+  function openTaskModal(modal: ReactNode) {
+    setTaskModal(modal)
+    setIsTaskModalOpen(true);
+    setIsOpen(true);
+  }
 
-    await axios.post('http://localhost:8000/boards/task', formJson);
+  function closeAddTaskModal() {
+    setIsOpen(false);
+    setIsAddTaskModalOpen(false);
+  }
+
+  function closeTaskModal() {
+    setIsOpen(false);
+    setIsTaskModalOpen(false);
+  }
+
+  async function createTask(formJson) {
+    let postBody = serializeTaskData(formJson);
+
+    await axios.post('http://localhost:8000/boards/task', postBody);
     setIsAddTaskModalOpen(false);
     setIsOpen(false);
   }
@@ -72,12 +86,17 @@ export default function Home() {
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
             <div className={Styles.board}>
-                <Board name={board.name} columns={columns}></Board>
+                <Board name={board.name} columns={columns} handleOpenTask={openTaskModal}></Board>
             </div>
         </div>
         {isAddTaskModalOpen && 
-          <Modal handleClose={() => setIsOpen(false)} isOpen={isOpen}>
+          <Modal handleClose={closeAddTaskModal} isOpen={isOpen}>
             <AddTaskModal columns={columns} createTask={createTask}></AddTaskModal>
+          </Modal>
+        }
+        {isTaskModalOpen && 
+          <Modal handleClose={closeTaskModal} isOpen={isOpen}>
+            {taskModal}
           </Modal>
         }
     </div>

@@ -22,9 +22,6 @@ export default function Modal({ children, isOpen, handleClose }: ModalProps) {
 
   return (
     <div className={styles.modal}>
-      {/* <button onClick={handleClose} className="close-btn">
-        Close
-      </button> */}
       <div className="modal-content">{children}</div>
     </div>
   );
