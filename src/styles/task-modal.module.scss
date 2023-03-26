@@ -1,0 +1,36 @@
+.name {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.description {
+    font-weight: 500;
+    font-size: 13px;
+    color: $medium-grey;
+}
+
+.subtaskListItem {
+    height: 40px;
+    font-size: 12px;
+    padding-left: 17px;
+    background-color: $light-grey;
+    display: flex;
+    align-items: center;
+}
+
+.subtaskCheckBox {
+    margin-right: 20px;
+}
+
+.label {
+    font-size: 12px;
+    color: $medium-grey;
+
+    &__marginBottom16 {
+        margin-bottom: 16px;
+    }
+
+    &__marginBottom8 {
+        margin-bottom: 8px;
+    }
+}

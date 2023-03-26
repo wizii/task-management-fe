@@ -21,9 +21,10 @@ type Board = {
 export default function Home() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
 
@@ -63,11 +64,12 @@ export default function Home() {
   }
 
   function openTaskModal(id: number) {
-    let task = tasks.find(task => task.id === id);
+    let task = getParentTasks().find(task => task.id === id);
     let taskModal = TaskModal({
       name: task?.name,
       description: task?.description,
       selectedColumnId: task?.column,
+      subtasks: task?.subtasks,
       columns: columns
     });
     setTaskModal(taskModal);
@@ -75,7 +77,19 @@ export default function Home() {
     setIsOpen(true);
   }
 
+  // TODO: refactor: DRY
+
+  function openAddColumnModal() {
+    setIsAddColumnModalOpen(true);
+    setIsOpen(true);
+  }
+
   function closeAddTaskModal() {
+    setIsOpen(false);
+    setIsAddTaskModalOpen(false);
+  }
+
+  function closeAddColumnModal() {
     setIsOpen(false);
     setIsAddTaskModalOpen(false);
   }
@@ -96,8 +110,15 @@ export default function Home() {
   function getColumnsWithTasks() {
     return columns.map(column => ({
       ...column,
-      tasks: tasks.filter(task => task.column === column.id)
+      tasks: getParentTasks().filter(task => task.column === column.id)
     }))
+  }
+
+  function getParentTasks() {
+    return allTasks.filter(task => task.parent == null).map(parent => ({
+      ...parent,
+      subtasks: allTasks.filter(task => task.parent === parent.id)
+    }));
   }
 
   return (
@@ -112,7 +133,7 @@ export default function Home() {
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
             <div className={Styles.board}>
-                <Board name={board.name} columns={getColumnsWithTasks()} handleOpenTask={openTaskModal}></Board>
+                <Board name={board.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
             </div>
         </div>
         {isAddTaskModalOpen && 
@@ -123,6 +144,11 @@ export default function Home() {
         {isTaskModalOpen && 
           <Modal handleClose={closeTaskModal} isOpen={isOpen}>
             {taskModal}
+          </Modal>
+        }
+        {isAddColumnModalOpen && 
+          <Modal handleClose={closeAddColumnModal} isOpen={isOpen}>
+            This is the add column modal
           </Modal>
         }
     </div>

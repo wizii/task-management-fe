@@ -1,4 +1,5 @@
 import { Column } from "@/lib/models/column";
+import styles from '../styles/column-selector.module.scss';
 
 interface SelectorProps {
     columns: Column[];
@@ -8,7 +9,8 @@ interface SelectorProps {
 
 export function ColumnSelector(props: SelectorProps) {
     return (
-        <select className='' name='column' id='column'>
+        <div className={styles.selectWrapper}>
+            <select className={styles.select} name='column' id='column'>
             {props.columns.map(({name, id}) => 
                 <option 
                     key={id}
@@ -19,5 +21,6 @@ export function ColumnSelector(props: SelectorProps) {
                 </option>
             )}
         </select>
+        </div>
     );
 }

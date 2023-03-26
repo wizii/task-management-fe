@@ -4,3 +4,24 @@
     background-color: #F4F7FD;
     height: calc(100vh - 96px);
 }
+
+.addColumn {
+    background: linear-gradient(180deg, #E9EFFA 0%, rgba(233, 239, 250, 0.5) 100%);
+    border-radius: 6px;
+    width: 280px;
+    margin-top: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: $medium-grey;
+    font-weight: 700px;
+}
+
+.addColumnLink {
+    cursor: pointer;
+
+    &:hover {
+        color: $main-purple;
+    }
+}

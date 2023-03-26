@@ -16,8 +16,8 @@ export function Column(props: ColumnProps) {
     let columnColorModifier = `columnName__${props.color}`;
     return (
             <div key={props.name} className={styles.column}>
-                <div className={`${styles.columnName} ${styles[columnColorModifier]}`}>{props.name}</div>
-                {
+                <div className={`${styles.columnName} ${styles[columnColorModifier]}`}>{props.name}</div>                
+                {                    
                     props.tasks.map(task => (
                         <TaskCard 
                             key={task.name}

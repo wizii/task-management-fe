@@ -8,7 +8,8 @@ import { Column as ColumnModel } from '../lib/models/column';
 interface BoardProps {
     name: string;
     columns: ColumnModel[];
-    handleOpenTask: () => void;
+    handleOpenTaskModal: () => void;
+    handleOpenAddColumnModal: () => void;
 }
 
 export function Board(props: BoardProps) {
@@ -16,9 +17,12 @@ export function Board(props: BoardProps) {
         <div className={styles.board}>
             {
                 props.columns.map(column => (
-                    <Column key={column.name} name={column.name} color={column.color} tasks={column.tasks} handleOpenTask={props.handleOpenTask}></Column>
+                    <Column key={column.name} name={column.name} color={column.color} tasks={column.tasks} handleOpenTask={props.handleOpenTaskModal}></Column>
                 ))
-            }   
+            }
+            <div className={styles.addColumn}>
+                <div className={styles.addColumnLink} onClick={props.handleOpenAddColumnModal}>+ New Column</div>
+            </div>
 
         </div>
     )
