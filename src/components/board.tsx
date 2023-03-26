@@ -1,51 +1,21 @@
+import axios from 'axios';
+import { useEffect, useState } from 'react';
 import styles from '../styles/board.module.scss';
 import { Column } from './column';
-import TaskCard from './task-card';
+import { deserializeColumns } from '@/lib/serializers/serialize';
+import { Column as ColumnModel } from '../lib/models/column';
 
 interface BoardProps {
     name: string;
+    columns: ColumnModel[];
 }
-
-const COLUMNS = [
-    {
-        color: 'blue',
-        name: 'todo',
-        tasks: [
-            {
-                name: "very important task"
-            },
-            {
-                name: "less important task"
-            }
-        ]
-
-    },
-    {
-        color: 'purple',
-        name: 'doing',
-        tasks: [
-            {
-                name: "very important task",
-                subtasks: [
-                    {
-                        name: 'First subtask'
-                    }
-                ]
-            },
-            {
-                name: "less important task"
-            }
-        ]
-
-    }
-]
 
 export function Board(props: BoardProps) {
     return (
         <div className={styles.board}>
             {
-                COLUMNS.map(column => (
-                    <Column key={column.name} tasks={column.tasks} name={column.name} color={column.color}></Column>
+                props.columns.map(column => (
+                    <Column key={column.name} name={column.name} color={column.color}></Column>
                 ))
             }   
 

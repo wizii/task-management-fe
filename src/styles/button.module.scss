@@ -1,0 +1,8 @@
+.mainPurple {
+    color: #FFF;
+    background-color: $main-purple;
+  
+    &:hover {
+      background-color: $main-purple-hover;
+    }
+  }
