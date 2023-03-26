@@ -16,7 +16,7 @@ export function Board(props: BoardProps) {
         <div className={styles.board}>
             {
                 props.columns.map(column => (
-                    <Column key={column.name} name={column.name} color={column.color} handleOpenTask={props.handleOpenTask}></Column>
+                    <Column key={column.name} name={column.name} color={column.color} tasks={column.tasks} handleOpenTask={props.handleOpenTask}></Column>
                 ))
             }   
 

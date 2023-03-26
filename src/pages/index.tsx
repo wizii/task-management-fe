@@ -8,7 +8,9 @@ import { FormEvent, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
 import AddTaskModal from '@/components/add-task-modal';
 import { Column } from '@/lib/models/column';
-import { serializeTaskData } from '../lib/serializers/serialize'
+import { TaskModal } from '../components/task-modal'; 
+import { serializeTaskData } from '../lib/serializers/serialize';
+import { Task } from '@/lib/models/task';
 
 type Board = {
   isSelected: boolean;
@@ -19,6 +21,7 @@ type Board = {
 export default function Home() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -43,6 +46,15 @@ export default function Home() {
     fetchColumns();
   });
 
+  useEffect(() => {
+    const fetchTasks = async () => {
+      const result = await axios.get('http://localhost:8000/boards/columns/tasks');
+      setTasks(result.data);
+    };
+
+    fetchTasks();
+  });
+
   const board = boards?.find(board => board.isSelected) ?? {};
 
   function openAddTaskModal() {
@@ -50,8 +62,15 @@ export default function Home() {
     setIsOpen(true);
   }
 
-  function openTaskModal(modal: ReactNode) {
-    setTaskModal(modal)
+  function openTaskModal(id: number) {
+    let task = tasks.find(task => task.id === id);
+    let taskModal = TaskModal({
+      name: task?.name,
+      description: task?.description,
+      selectedColumnId: task?.column,
+      columns: columns
+    });
+    setTaskModal(taskModal);
     setIsTaskModalOpen(true);
     setIsOpen(true);
   }
@@ -74,6 +93,13 @@ export default function Home() {
     setIsOpen(false);
   }
 
+  function getColumnsWithTasks() {
+    return columns.map(column => ({
+      ...column,
+      tasks: tasks.filter(task => task.column === column.id)
+    }))
+  }
+
   return (
     <div>
         <Head>
@@ -86,7 +112,7 @@ export default function Home() {
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
             <div className={Styles.board}>
-                <Board name={board.name} columns={columns} handleOpenTask={openTaskModal}></Board>
+                <Board name={board.name} columns={getColumnsWithTasks()} handleOpenTask={openTaskModal}></Board>
             </div>
         </div>
         {isAddTaskModalOpen && 
