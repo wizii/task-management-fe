@@ -9,6 +9,8 @@ interface AddTaskModalProps {
     createTask: (e: FormEvent<HTMLFormElement>) => void;
 }
 
+
+// TODO: required fields, fix submit button
 export default function AddTaskModal(props: AddTaskModalProps) {
     // [erroredFields, setErroredFields] = useState({});
 

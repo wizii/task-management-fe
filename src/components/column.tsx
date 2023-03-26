@@ -12,6 +12,7 @@ interface ColumnProps {
     handleOpenTask: () => void;
 }
 
+// TODO: show color next to column name
 export function Column(props: ColumnProps) {
     let columnColorModifier = `columnName__${props.color}`;
     return (

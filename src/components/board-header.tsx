@@ -6,6 +6,7 @@ interface HeaderProps {
     handleAddTask: () => void;
 }
 
+// TODO: board name, dots menu
 export function BoardHeader(props: HeaderProps) {
     return (
         <div className={styles.header}>

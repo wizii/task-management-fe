@@ -18,6 +18,7 @@ interface SideBarProps {
     ]
 }
 
+// TODO: Fix logo, Fix checkbox, active state of selected board, add board link, hide sidebar
 export function SideBar(props: SideBarProps) {
     const boardCount = props.boards?.length ?? 0; 
     return (

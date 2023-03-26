@@ -18,6 +18,7 @@ type Board = {
   id: number;
 }
 
+// TODO: responsive, toggle theme
 export default function Home() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -91,7 +92,7 @@ export default function Home() {
 
   function closeAddColumnModal() {
     setIsOpen(false);
-    setIsAddTaskModalOpen(false);
+    setIsAddColumnModalOpen(false);
   }
 
   function closeTaskModal() {

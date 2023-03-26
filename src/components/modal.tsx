@@ -7,6 +7,7 @@ interface ModalProps {
     handleClose: () => void;
 }
 
+// TODO: close when clicking outside
 export default function Modal({ children, isOpen, handleClose }: ModalProps) {  
   useEffect(() => {
     const closeOnEscapeKey = e => e.key === "Escape" ? handleClose() : null;
