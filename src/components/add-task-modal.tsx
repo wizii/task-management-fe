@@ -23,7 +23,7 @@ export default function AddTaskModal(props: AddTaskModalProps) {
         let formData = new FormData(form);
         let formJson = Object.fromEntries(formData.entries());
         
-        // props.createTask(formJson);
+        props.createTask(formJson);
     }
 
     return (
@@ -50,10 +50,10 @@ export default function AddTaskModal(props: AddTaskModalProps) {
             <div className={modalStyles.section}>
                 <div className={modalStyles.label}>Subtasks</div>
                 <RemovableField>
-                    <input name='subtask-1' className={`${modalStyles.input} ${styles.subTask}`} required placeholder='e.g. Make coffee' />
+                    <input name='subtask-1' className={`${modalStyles.input} ${styles.subTask}`} placeholder='e.g. Make coffee' />
                 </RemovableField>
                 <RemovableField>
-                    <input name ='subtask-2' className={`${modalStyles.input} ${styles.subTask}`} required placeholder='e.g. Drink coffee & smile' />
+                    <input name ='subtask-2' className={`${modalStyles.input} ${styles.subTask}`} placeholder='e.g. Drink coffee & smile' />
                 </RemovableField>
             </div>
             <div className={modalStyles.section}>

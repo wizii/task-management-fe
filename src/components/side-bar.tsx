@@ -4,10 +4,12 @@ import { ToggleButton } from './toggle-button';
 import SideBarItem from './sidebar-item';
 
 interface SideBarProps {
+    handleSelectedBoard: (id: number) => void;
     boards: [
         {
             isSelected: boolean;
             name: string;
+            id: number;
             columns: [{
                 name: string;
                 tasks: [{
@@ -30,7 +32,14 @@ export function SideBar(props: SideBarProps) {
             </div>
             <SideBarItem isActive={true} modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
             {props.boards.map(board => 
-                <SideBarItem key={board.name} isActive={board.isSelected} modifiers={['hasIcon', 'boardLink']}>{board.name}</SideBarItem>
+                <SideBarItem 
+                    key={board.name}
+                    isActive={board.isSelected}
+                    modifiers={['hasIcon', 'boardLink']}
+                    onClick={() => props.handleSelectedBoard(board.id)}
+                >
+                    {board.name}
+                </SideBarItem>
             )}
 
             <SideBarItem modifiers={['hasIcon', 'createBoardLink']} onClick={props.handleOpenAddBoardModal}>+ Create New Board</SideBarItem>

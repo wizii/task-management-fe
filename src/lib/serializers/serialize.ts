@@ -20,3 +20,18 @@ export function serializeTaskData(data: TaskData) {
         description: data.description
     }
 }
+
+export function serializeBoardData(data) {
+    let columns = Object.entries(data).filter(([key, value]) => {
+        return key.startsWith('column')
+    })
+    columns = columns.map(([key, value]) => ({
+        id: key.split('-')[1],
+        name: value
+    }));
+    
+    return {
+        name: data.name,
+        columns: columns
+    }
+}

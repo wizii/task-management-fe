@@ -4,4 +4,5 @@ export interface Task {
     description?: string;
     parent: number;
     column: number;
+    board: number;
 }

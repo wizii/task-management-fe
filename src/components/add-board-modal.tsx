@@ -23,7 +23,7 @@ export default function AddBoardModal(props: AddBoardModalProps) {
         let formData = new FormData(form);
         let formJson = Object.fromEntries(formData.entries());
         
-        // props.createBoard(formJson);
+        props.createBoard(formJson);
     }
 
     function addColumn() {

@@ -9,20 +9,16 @@ import axios from 'axios';
 import AddTaskModal from '@/components/add-task-modal';
 import { Column } from '@/lib/models/column';
 import { TaskModal } from '../components/task-modal'; 
-import { serializeTaskData } from '../lib/serializers/serialize';
+import { serializeTaskData, serializeBoardData } from '../lib/serializers/serialize';
 import { Task } from '@/lib/models/task';
+import  { Board as BoardModel } from '@/lib/models/board';
 import AddBoardModal from '@/components/add-board-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-type Board = {
-  isSelected: boolean;
-  name: string;
-  id: number;
-}
-
-// TODO: responsive, toggle theme, error handling
+// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies
 export default function Home() {
-  const [boards, setBoards] = useState<Board[]>([]);
+  const [boards, setBoards] = useState<BoardModel[]>([]);
+  const [activeBoardId, setActiveBoardId] = useState(1);
   const [columns, setColumns] = useState<Column[]>([]);
   const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
@@ -33,6 +29,8 @@ export default function Home() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
   const [openTask, setOpenTask] = useState<Task>();
+
+  const board = boards.filter(board => board.id === activeBoardId);
 
   const taskModalActions = [{
     name: 'Edit Task',
@@ -68,7 +66,7 @@ export default function Home() {
 
   useEffect(() => {
     const fetchColumns = async () => {
-      const result = await axios.get('http://localhost:8000/boards/columns');
+      const result = await axios.get(`http://localhost:8000/boards/board/${activeBoardId}/columns`);
       setColumns(result.data);
     };
 
@@ -77,14 +75,16 @@ export default function Home() {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const result = await axios.get('http://localhost:8000/boards/columns/tasks');
+      const result = await axios.get(`http://localhost:8000/boards/board/${activeBoardId}/tasks`);
       setTasks(result.data);
     };
 
     fetchTasks();
   });
 
-  const board = boards?.find(board => board.isSelected) ?? {};
+function handleSelectedBoard(id: number) {
+  setActiveBoardId(id) 
+}
 
   function openAddTaskModal() {
     setIsAddTaskModalOpen(true);
@@ -144,7 +144,12 @@ export default function Home() {
   }
 
   async function createTask(formJson) {
-    let postBody = serializeTaskData(formJson);
+    let postBody = {
+      CRUDFlag: 'C',
+      ...serializeTaskData(formJson),
+      board: activeBoardId
+    };
+    console.log(postBody)
 
     await axios.post('http://localhost:8000/boards/task', postBody);
     setIsAddTaskModalOpen(false);
@@ -152,18 +157,24 @@ export default function Home() {
   }
 
   async function createBoard(formJson) {
-    let postBody = serializeTaskData(formJson);
-
-    console.log('create board')
-    // await axios.post('http://localhost:8000/board', postBody);
     setIsAddTaskModalOpen(false);
     setIsOpen(false);
+    
+    let postBody = serializeBoardData(formJson);
+    await axios.post('http://localhost:8000/boards/board', { name: postBody.name });
+    await createColumns(postBody.columns);
+  }
+
+  async function createColumns(columns) {
+    
+    console.log('create columns')
+    // await axios.post('http://localhost:8000/board/columns', postBody);
   }
 
   function getColumnsWithTasks() {
     return columns.map(column => ({
       ...column,
-      tasks: getParentTasks().filter(task => task.column === column.id)
+      tasks: getParentTasks().filter(task => task.column === column.id && task.board == column.board)
     }))
   }
 
@@ -181,7 +192,7 @@ export default function Home() {
           <meta name="description" content="Task Management" />
       </Head>
     <div className={Styles.container}>
-        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal}></SideBar>
+        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal} handleSelectedBoard={handleSelectedBoard}></SideBar>
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
             <div className={Styles.board}>
