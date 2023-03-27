@@ -5,9 +5,9 @@ import SideBarItem from './sidebar-item';
 
 interface SideBarProps {
     handleSelectedBoard: (id: number) => void;
+    activeBoardId: number;
     boards: [
-        {
-            isSelected: boolean;
+        {            
             name: string;
             id: number;
             columns: [{
@@ -30,11 +30,11 @@ export function SideBar(props: SideBarProps) {
                 <LogoIcon theme='light'></LogoIcon>
                 Kanban
             </div>
-            <SideBarItem isActive={true} modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
+            <SideBarItem modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
             {props.boards.map(board => 
                 <SideBarItem 
                     key={board.name}
-                    isActive={board.isSelected}
+                    isSelected={board.id === props.activeBoardId}
                     modifiers={['hasIcon', 'boardLink']}
                     onClick={() => props.handleSelectedBoard(board.id)}
                 >

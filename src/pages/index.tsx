@@ -17,7 +17,7 @@ import AddBoardModal from '@/components/add-board-modal';
 import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies, createColumns in create board
+// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies, createColumns in create board, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [taskCount, setTaskCount] = useState(0);
@@ -165,8 +165,8 @@ function handleSelectedBoard(id: number) {
     setIsOpen(false);
     
     let postBody = serializeBoardData(formJson);
-    await axios.post('http://localhost:8000/boards/board', { name: postBody.name });
-    await createColumns(postBody.columns);
+    let response = await axios.post('http://localhost:8000/boards/board', { name: postBody.name });
+    await createColumns(response.data.id, postBody.columns);
   }
 
   async function createColumn(formJson) {
@@ -181,10 +181,12 @@ function handleSelectedBoard(id: number) {
     await axios.post('http://localhost:8000/boards/column', data);
   }
 
-  async function createColumns(columns) {
-    
-    console.log('create columns')
-    // await axios.post('http://localhost:8000/board/columns', postBody);
+  async function createColumns(boardId, columns) {
+    let data = columns.map(column => ({
+      board: boardId,
+      ...column
+    }))
+    await axios.post('http://localhost:8000/boards/columns', data);
   }
 
   function getColumnsWithTasks() {
@@ -208,7 +210,7 @@ function handleSelectedBoard(id: number) {
           <meta name="description" content="Task Management" />
       </Head>
     <div className={Styles.container}>
-        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal} handleSelectedBoard={handleSelectedBoard}></SideBar>
+        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
             <div className={Styles.board}>

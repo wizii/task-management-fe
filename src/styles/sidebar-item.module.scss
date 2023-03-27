@@ -44,4 +44,14 @@
             background-image: url('/icons/board-purple.svg');
         }
     }
+
+    &__isSelected {
+        color: #FFF;
+        background-color: $main-purple;
+        border-radius: 0px 100px 100px 0px;
+        
+        &:before {
+            background-image: url('/icons/board-white.svg');
+        }
+    }
 }

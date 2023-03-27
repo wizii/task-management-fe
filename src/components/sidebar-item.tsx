@@ -2,7 +2,7 @@ import styles from '../styles/sidebar-item.module.scss';
 import { ReactNode } from 'react';
 
 interface SideBarItemProps { 
-    isActive?: boolean;
+    isSelected?: boolean;
     modifiers?: string[];
     children?: ReactNode;
     onClick?: () => void;
@@ -10,10 +10,9 @@ interface SideBarItemProps {
 
 export default function SideBarItem(props: SideBarItemProps) {
     function classModifiers() {  
-        let classes =props.modifiers?.map(modifier => styles[`item__${modifier}`]).join(' ');
-        return classes;
+        return props.modifiers?.map(modifier => styles[`item__${modifier}`]).join(' ');
       }
 
-    return <div className={`${styles.item} ${classModifiers()}`} onClick={props.onClick}>{props.children}</div>
+    return <div className={`${styles.item} ${classModifiers()} ${props.isSelected ? styles.item__isSelected : ''}`} onClick={props.onClick}>{props.children}</div>
 
 }

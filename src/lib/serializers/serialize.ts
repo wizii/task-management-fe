@@ -26,7 +26,6 @@ export function serializeBoardData(data) {
         return key.startsWith('column')
     })
     columns = columns.map(([key, value]) => ({
-        id: key.split('-')[1],
         name: value
     }));
     
