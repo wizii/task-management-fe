@@ -11,6 +11,7 @@ import { Column } from '@/lib/models/column';
 import { TaskModal } from '../components/task-modal'; 
 import { serializeTaskData } from '../lib/serializers/serialize';
 import { Task } from '@/lib/models/task';
+import AddBoardModal from '@/components/add-board-modal';
 
 type Board = {
   isSelected: boolean;
@@ -26,6 +27,7 @@ export default function Home() {
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
+  const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
 
@@ -85,6 +87,11 @@ export default function Home() {
     setIsOpen(true);
   }
 
+  function openAddBoardModal() {
+    setIsAddBoardModalOpen(true);
+    setIsOpen(true);
+  }
+
   function closeAddTaskModal() {
     setIsOpen(false);
     setIsAddTaskModalOpen(false);
@@ -93,6 +100,11 @@ export default function Home() {
   function closeAddColumnModal() {
     setIsOpen(false);
     setIsAddColumnModalOpen(false);
+  }
+
+  function closeAddBoardModal() {
+    setIsOpen(false);
+    setIsAddBoardModalOpen(false);
   }
 
   function closeTaskModal() {
@@ -104,6 +116,15 @@ export default function Home() {
     let postBody = serializeTaskData(formJson);
 
     await axios.post('http://localhost:8000/boards/task', postBody);
+    setIsAddTaskModalOpen(false);
+    setIsOpen(false);
+  }
+
+  async function createBoard(formJson) {
+    let postBody = serializeTaskData(formJson);
+
+    console.log('create board')
+    // await axios.post('http://localhost:8000/board', postBody);
     setIsAddTaskModalOpen(false);
     setIsOpen(false);
   }
@@ -130,7 +151,7 @@ export default function Home() {
           {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
     <div className={Styles.container}>
-        <SideBar boards={boards}></SideBar>
+        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal}></SideBar>
         <div className={Styles.boardContainer}>
             <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
             <div className={Styles.board}>
@@ -150,6 +171,11 @@ export default function Home() {
         {isAddColumnModalOpen && 
           <Modal handleClose={closeAddColumnModal} isOpen={isOpen}>
             This is the add column modal
+          </Modal>
+        }
+        {isAddBoardModalOpen && 
+          <Modal handleClose={closeAddBoardModal} isOpen={isOpen}>
+            <AddBoardModal createBoard={createBoard}></AddBoardModal>
           </Modal>
         }
     </div>

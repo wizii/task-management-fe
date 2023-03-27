@@ -16,9 +16,10 @@ interface SideBarProps {
             }]
         }
     ]
+    handleOpenAddBoardModal: () => void;
 }
 
-// TODO: Fix logo, Fix checkbox, active state of selected board, add board link, hide sidebar
+// TODO: Fix logo, Fix checkbox, active state of selected board,hide sidebar
 export function SideBar(props: SideBarProps) {
     const boardCount = props.boards?.length ?? 0; 
     return (
@@ -27,10 +28,12 @@ export function SideBar(props: SideBarProps) {
                 <LogoIcon theme='light'></LogoIcon>
                 Kanban
             </div>
-            <SideBarItem isActive={true} modifiers='allBoards'>All Boards ({boardCount})</SideBarItem>
+            <SideBarItem isActive={true} modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
             {props.boards.map(board => 
-                <SideBarItem key={board.name} isActive={board.isSelected} isBoardLink={true} modifiers=''>{board.name}</SideBarItem>
+                <SideBarItem key={board.name} isActive={board.isSelected} modifiers={['hasIcon', 'boardLink']}>{board.name}</SideBarItem>
             )}
+
+            <SideBarItem modifiers={['hasIcon', 'createBoardLink']} onClick={props.handleOpenAddBoardModal}>+ Create New Board</SideBarItem>
             
             <div className={styles.sidebar_footer}>
                 <div className={`${styles.sidebar_item} ${styles.toggleTheme}`}>
@@ -38,7 +41,7 @@ export function SideBar(props: SideBarProps) {
                     <ToggleButton></ToggleButton>
                     <div className={`${styles.themeIcon} ${styles.themeIcon__moon}`}></div>
                 </div>
-                <SideBarItem modifiers='hideSidebar'>Hide Sidebar</SideBarItem>
+                <SideBarItem modifiers={['hasIcon', 'hideSidebar']}>Hide Sidebar</SideBarItem>
             </div>
         </div>
     )
