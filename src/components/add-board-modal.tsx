@@ -11,6 +11,8 @@ interface AddBoardModalProps {
 
 // TODO: required fields
 export default function AddBoardModal(props: AddBoardModalProps) {
+    const [columnCount, setColumnCount] = useState(1);
+    const [columns, setColumns] = useState([{ id: 1, name: ''}]);
     // [erroredFields, setErroredFields] = useState({});
 
     const requiredFields = ['title', 'column'];
@@ -21,9 +23,17 @@ export default function AddBoardModal(props: AddBoardModalProps) {
         let formData = new FormData(form);
         let formJson = Object.fromEntries(formData.entries());
         
-        
-        
         // props.createBoard(formJson);
+    }
+
+    function addColumn() {
+        setColumnCount(columnCount + 1);
+        setColumns([...columns, { id: columnCount + 1, name: '' }]);
+    }
+
+    function removeColumn(id: number) {
+        let remainingColumns = columns.filter(col => col.id !== id);
+        setColumns(remainingColumns);
     }
 
     return (
@@ -38,20 +48,28 @@ export default function AddBoardModal(props: AddBoardModalProps) {
                     required
                 />
             </div>
-            <div className={modalStyles.section}>
+            {columns.length ? 
+                <div className={modalStyles.section}>
                 <div className={modalStyles.label}>Columns</div>
-                    <RemovableField>
+                {columns.map(col => (
+                    <RemovableField key={col.id} removeField={removeColumn} id={col.id}>
                         <input 
-                            type="text"
-                            name="column-1"
-                            id="column-1" 
+                            type='text'
+                            name={`column-${col.id}`}
+                            id={`column-${col.id}`}
                             className={modalStyles.input} 
+                            placeholder='e.g. Todo'
                         />
                     </RemovableField>
+                ))} 
                 </div>
+                : ''
+            }
+            
             <div className={modalStyles.section}>
                 <button 
                     type='button'
+                    onClick={addColumn}
                     className={`
                         ${buttonStyles.button}
                         ${buttonStyles.button__fadedPurple} 
@@ -59,7 +77,7 @@ export default function AddBoardModal(props: AddBoardModalProps) {
                         ${buttonStyles.button__isInModal}
                     `}
                 >
-                    Add New Column
+                    + Add New Column
                 </button>
                 </div>
             <div className={modalStyles.section}>

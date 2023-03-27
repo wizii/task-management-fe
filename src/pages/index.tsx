@@ -12,6 +12,7 @@ import { TaskModal } from '../components/task-modal';
 import { serializeTaskData } from '../lib/serializers/serialize';
 import { Task } from '@/lib/models/task';
 import AddBoardModal from '@/components/add-board-modal';
+import { DeleteTaskModal } from '@/components/delete-task-modal';
 
 type Board = {
   isSelected: boolean;
@@ -26,11 +27,35 @@ export default function Home() {
   const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
+  const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
-  const [openTaskName, setOpenTaskName] = useState('');
+  const [openTask, setOpenTask] = useState<Task>();
+
+  const taskModalActions = [{
+    name: 'Edit Task',
+    function: () => {}
+  },{
+    name: 'Delete Task',
+    function: handleDeleteTask,
+    isRed: true
+  }];
+
+  function handleDeleteTask() {
+    setIsTaskModalOpen(false);
+    setIsDeleteTaskModalOpen(true);
+  }
+
+  async function deleteTask() {
+    setIsDeleteTaskModalOpen(false);
+    setIsOpen(false);
+    await axios.post('http://localhost:8000/boards/task', {
+      CRUDFlag: 'D',
+      id: openTask?.id
+    });
+  }
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -76,7 +101,7 @@ export default function Home() {
       columns: columns
     });
     setTaskModal(taskModal);
-    setOpenTaskName(task?.name);
+    setOpenTask(task);
     setIsTaskModalOpen(true);
     setIsOpen(true);
   }
@@ -101,6 +126,11 @@ export default function Home() {
   function closeAddColumnModal() {
     setIsOpen(false);
     setIsAddColumnModalOpen(false);
+  }
+
+  function closeDeleteTaskModal() {
+    setIsOpen(false);
+    setIsDeleteTaskModalOpen(false);
   }
 
   function closeAddBoardModal() {
@@ -149,7 +179,6 @@ export default function Home() {
         <Head>
           <title>Task Management</title>
           <meta name="description" content="Task Management" />
-          {/* <link rel="icon" href="/favicon.ico" /> */}
       </Head>
     <div className={Styles.container}>
         <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal}></SideBar>
@@ -165,7 +194,13 @@ export default function Home() {
           </Modal>
         }
         {isTaskModalOpen && 
-          <Modal handleClose={closeTaskModal} isOpen={isOpen} title={openTaskName}>
+          <Modal 
+            title={openTask?.name}
+            handleClose={closeTaskModal}
+            isOpen={isOpen}
+            hasDotsMenu={true}
+            actions={taskModalActions}
+          >
             {taskModal}
           </Modal>
         }
@@ -177,6 +212,11 @@ export default function Home() {
         {isAddBoardModalOpen && 
           <Modal handleClose={closeAddBoardModal} isOpen={isOpen} title={'Add New Board'}>
             <AddBoardModal createBoard={createBoard}></AddBoardModal>
+          </Modal>
+        }
+        {isDeleteTaskModalOpen && 
+          <Modal handleClose={closeDeleteTaskModal} isOpen={isOpen} title={'Delete this task?'} titleModifiers={['isRed']}>
+            <DeleteTaskModal handleCancel={closeDeleteTaskModal} handleDelete={deleteTask}></DeleteTaskModal>
           </Modal>
         }
     </div>

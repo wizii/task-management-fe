@@ -4,6 +4,8 @@ import buttonStyles from '../styles/button.module.scss';
 
 interface RemovableFieldProps {
     children: ReactNode;
+    id: number | string;
+    removeField: (id: string) => void;
 }
 
 export function RemovableField(props: RemovableFieldProps) {
@@ -12,7 +14,7 @@ export function RemovableField(props: RemovableFieldProps) {
             <div className={styles.inputFieldWrapper}>
                 {props.children}
             </div>
-            <button type='button' className={`${buttonStyles.button} ${styles.xButton}`}></button>
+            <button type='button' className={`${buttonStyles.button} ${styles.xButton}`} onClick={() =>props.removeField(props.id)}></button>
         </div>
     )
 }

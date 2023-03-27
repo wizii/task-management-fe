@@ -13,6 +13,7 @@
   }
 
   .modalContent {
+    position: relative;
     width: 480px;
     background: #FFF;
     display: flex;
@@ -29,6 +30,10 @@
   font-weight: 700;
   font-size: 18px;
   margin-bottom: 24px;
+
+  &__isRed {
+    color: $red;
+  }
 }
 
 .label {
@@ -37,6 +42,12 @@
   font-size: 12px;
   font-weight: 700;
   margin-bottom: 8px;
+}
+
+.text {
+  color: $medium-grey;
+  font-weight: 500;
+  font-size: 13px;
 }
 
 .input {
@@ -60,4 +71,51 @@
       outline: none;
       border-color: $main-purple;
   }
+}
+
+.modalHeader {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+
+.dotsMenu {
+  width: 5px;
+  height: 20px;
+  background-image: url('/icons/vertical-dots.svg');
+  cursor: pointer;
+}
+
+.actionsPopup {
+  position: absolute;
+  border-radius: 8px;
+  z-index: 1000;
+  right: -65px;
+  top: 98px;
+  width: 192px;
+  display: flex;
+  flex-direction: column;
+  background-color: #FFF;
+  padding: 16px;
+}
+
+.action {
+  height: 23px;
+  font-size: 13px;
+  font-weight: 500;
+  color: $medium-grey;
+  cursor: pointer;
+
+  &__isRed {
+    color: $red;
+  }
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
 }

@@ -3,13 +3,23 @@
     border-radius: 20px;
     background-color: transparent;
     cursor: pointer;
+    font-size: 13px;
+    font-weight: 700;
+    color: #FFF;
 
   &__mainPurple {
-    color: #FFF;
     background-color: $main-purple;
   
     &:hover {
       background-color: $main-purple-hover;
+    }
+  }
+
+  &__red {
+    background-color: $red;
+
+    &:hover {
+      background-color: #FF9898;
     }
   }
 
@@ -28,5 +38,9 @@
 
   &__isInModal {
     width: 100%;
+  }
+
+  &__width200 {
+    width: 200px;
   }
 }
