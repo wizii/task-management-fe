@@ -15,8 +15,7 @@ interface TaskModalProps {
 // TODO: complete subtaks, count completed subtasks, edit, delete
 export function TaskModal({name, description, selectedColumnId, subtasks, columns}: TaskModalProps) {
     return (
-        <div className={modalStyles.modalContent}>
-            <div className={`${modalStyles.section} ${styles.name}`}>{name}</div>
+        <div>
             <div className={`${modalStyles.section} ${styles.description}`}>{description}</div>
             {subtasks.length &&
                 <div className={`${modalStyles.section} ${styles.subtasks}`}>

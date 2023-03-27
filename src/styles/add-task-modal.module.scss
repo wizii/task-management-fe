@@ -1,41 +1,12 @@
-.input {
-    display: block;
-    height: 40px;
-    padding-left: 16px;
-    width: 100%;
-    margin-top: 8px;
-    margin-bottom: 24px;
-    border-radius: 4px;
-    border: 1px solid rgba(130, 143, 163, 0.25);
-
-    &::placeholder {
-        opacity: 25%;
-    }
-
-    &:hover {
-        border-color: $main-purple;
-        cursor: pointer;
-    }
-
-    &:focus-visible {
-        outline: none;
-        border-color: $main-purple;
-    }
-}
-
 .taskDescription {
     height: 112px;
     padding: 8px 16px;
 }
 
-.label {
-    color: $medium-grey;
-}
-
-.title {
-    margin-bottom: 24px;
-}
-
 .status {
     display: block;
+}
+
+.createTaskButton {
+    width: 100%;
 }

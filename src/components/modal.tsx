@@ -4,11 +4,12 @@ import styles from '../styles/modal.module.scss';
 interface ModalProps {
     children: ReactNode;
     isOpen: boolean;
+    title: string;
     handleClose: () => void;
 }
 
 // TODO: close when clicking outside
-export default function Modal({ children, isOpen, handleClose }: ModalProps) {  
+export default function Modal({ children, isOpen, title, handleClose }: ModalProps) {  
   useEffect(() => {
     const closeOnEscapeKey = e => e.key === "Escape" ? handleClose() : null;
     document.body.addEventListener("keydown", closeOnEscapeKey);
@@ -23,7 +24,10 @@ export default function Modal({ children, isOpen, handleClose }: ModalProps) {
 
   return (
     <div className={styles.modal}>
-      <div className="modal-content">{children}</div>
+      <div className={styles.modalContent}>
+        <div className={styles.modalTitle}>{title}</div>
+        {children}
+      </div>
     </div>
   );
 }

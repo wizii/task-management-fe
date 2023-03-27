@@ -12,7 +12,7 @@ export function BoardHeader(props: HeaderProps) {
         <div className={styles.header}>
         <div className={styles.boardName}>{props.boardName}</div>
         <div className={styles.headerActions}>
-            <button className={`${buttonStyles.mainPurple} ${styles.addTaskButton}`} onClick={props.handleAddTask}>+ Add New Task</button>
+            <button className={`${buttonStyles.button} ${buttonStyles.button__mainPurple} ${buttonStyles.button__height40} ${styles.addTaskButton}`} onClick={props.handleAddTask}>+ Add New Task</button>
             <div className={styles.dotsMenu}></div>
         </div>
         </div>

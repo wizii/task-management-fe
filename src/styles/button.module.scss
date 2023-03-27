@@ -1,4 +1,10 @@
-.mainPurple {
+.button {
+    border: none;
+    border-radius: 20px;
+    background-color: transparent;
+    cursor: pointer;
+
+  &__mainPurple {
     color: #FFF;
     background-color: $main-purple;
   
@@ -6,3 +12,21 @@
       background-color: $main-purple-hover;
     }
   }
+
+  &__fadedPurple {
+    color: $main-purple;
+    background-color: rgba(99, 95, 199, 0.1);
+  
+    &:hover {
+      background-color: rgba(99, 95, 199, 0.25);
+    }
+  }
+
+  &__height40 {
+    height: 40px;
+  }
+
+  &__isInModal {
+    width: 100%;
+  }
+}

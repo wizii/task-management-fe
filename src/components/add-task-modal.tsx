@@ -3,6 +3,7 @@ import { FormEvent, useState } from 'react';
 import styles from '../styles/add-task-modal.module.scss';
 import modalStyles from '../styles/modal.module.scss';
 import buttonStyles from '../styles/button.module.scss';
+import { RemovableField } from './removable-input-field';
 
 interface AddTaskModalProps {
     columns: Column[];
@@ -10,7 +11,7 @@ interface AddTaskModalProps {
 }
 
 
-// TODO: required fields, fix submit button
+// TODO: required fields, create task
 export default function AddTaskModal(props: AddTaskModalProps) {
     // [erroredFields, setErroredFields] = useState({});
 
@@ -22,46 +23,51 @@ export default function AddTaskModal(props: AddTaskModalProps) {
         let formData = new FormData(form);
         let formJson = Object.fromEntries(formData.entries());
         
-        
-        
         // props.createTask(formJson);
     }
 
     return (
-        <div className={modalStyles.modalContent}>
-            <form onSubmit={validateData}>
-                <div className={styles.title}>Add New Task</div>
-                <label className={styles.label}>
-                    Title
-                    <input
-                        name='title'
-                        className={`${styles.input} ${styles.taskTitle}`} 
-                        type='text' 
-                        placeholder='e.g. Take coffee break'
-                        required
-                    />
-                </label>
-                <label className={styles.label}>
-                    Description
-                    <textarea
-                        name='description'
-                        className={`${styles.input} ${styles.taskDescription}`} 
-                        placeholder="e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little."
-                    />
-                </label>
-                <label className={styles.label}>
-                    Subtasks
-                    <input name='subtask-1' className={`${styles.input} ${styles.subTask}`} required placeholder='e.g. Make coffee' />
-                    <input name ='subtask-2' className={`${styles.input} ${styles.subTask}`} required placeholder='e.g. Drink coffee & smile' />
-                </label>
-                <label className={styles.label}>
-                    Status
-                    <select className={`${styles.input} ${styles.status}`} required name='column' id='column'>
-                        {props.columns.map(({name, id}) => <option key={id} value={id}>{name}</option>)}
-                    </select>
-                </label>
-                <button type='submit' className={buttonStyles.mainPurple}>Create Task</button>
-            </form>
-        </div>
+        <form onSubmit={validateData}>
+            <div className={modalStyles.section}>
+                <div className={modalStyles.label}>Title</div>
+                <input
+                    name='title'
+                    className={`${modalStyles.input} ${styles.taskTitle}`} 
+                    type='text' 
+                    placeholder='e.g. Take coffee break'
+                    required
+                />
+            </div>
+            
+            <div className={modalStyles.section}>
+                <div className={modalStyles.label}>Description</div>
+                <textarea
+                    name='description'
+                    className={`${modalStyles.input} ${styles.taskDescription}`} 
+                    placeholder="e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little."
+                />
+            </div>
+            <div className={modalStyles.section}>
+                <div className={modalStyles.label}>Subtasks</div>
+                <RemovableField>
+                    <input name='subtask-1' className={`${modalStyles.input} ${styles.subTask}`} required placeholder='e.g. Make coffee' />
+                </RemovableField>
+                <RemovableField>
+                    <input name ='subtask-2' className={`${modalStyles.input} ${styles.subTask}`} required placeholder='e.g. Drink coffee & smile' />
+                </RemovableField>
+            </div>
+            <div className={modalStyles.section}>
+                <div className={modalStyles.label}>Status</div>
+                <select className={`${modalStyles.input} ${styles.status}`} required name='column' id='column'>
+                    {props.columns.map(({name, id}) => <option key={id} value={id}>{name}</option>)}
+                </select>
+            </div>
+            <button 
+                type='submit'
+                className={`${buttonStyles.button} ${buttonStyles.button__mainPurple} ${buttonStyles.button__height40} ${buttonStyles.button__isInModal}`}
+            >
+                Create Task
+            </button>
+        </form>
     )
 }

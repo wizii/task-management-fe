@@ -3,6 +3,8 @@
     width: 276px;
     padding: 15px 32px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
 
     &__hasIcon {
         &:before {

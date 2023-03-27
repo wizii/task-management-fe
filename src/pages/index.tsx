@@ -19,7 +19,7 @@ type Board = {
   id: number;
 }
 
-// TODO: responsive, toggle theme
+// TODO: responsive, toggle theme, error handling
 export default function Home() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -30,7 +30,7 @@ export default function Home() {
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
-
+  const [openTaskName, setOpenTaskName] = useState('');
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -76,6 +76,7 @@ export default function Home() {
       columns: columns
     });
     setTaskModal(taskModal);
+    setOpenTaskName(task?.name);
     setIsTaskModalOpen(true);
     setIsOpen(true);
   }
@@ -159,12 +160,12 @@ export default function Home() {
             </div>
         </div>
         {isAddTaskModalOpen && 
-          <Modal handleClose={closeAddTaskModal} isOpen={isOpen}>
+          <Modal handleClose={closeAddTaskModal} isOpen={isOpen} title='Add New Task'>
             <AddTaskModal columns={columns} createTask={createTask}></AddTaskModal>
           </Modal>
         }
         {isTaskModalOpen && 
-          <Modal handleClose={closeTaskModal} isOpen={isOpen}>
+          <Modal handleClose={closeTaskModal} isOpen={isOpen} title={openTaskName}>
             {taskModal}
           </Modal>
         }
@@ -174,7 +175,7 @@ export default function Home() {
           </Modal>
         }
         {isAddBoardModalOpen && 
-          <Modal handleClose={closeAddBoardModal} isOpen={isOpen}>
+          <Modal handleClose={closeAddBoardModal} isOpen={isOpen} title={'Add New Board'}>
             <AddBoardModal createBoard={createBoard}></AddBoardModal>
           </Modal>
         }
