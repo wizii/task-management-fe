@@ -1,6 +1,6 @@
 .button {
     border: none;
-    border-radius: 20px;
+    border-radius: 24px;
     background-color: transparent;
     cursor: pointer;
     font-size: 13px;
@@ -36,8 +36,17 @@
     height: 40px;
   }
 
+  &__height48 {
+    height: 48px;
+  }
+
+  &__width174 {
+    width: 174px;
+  }
+
   &__isInModal {
     width: 100%;
+    border-radius: 20px;
   }
 
   &__width200 {

@@ -3,6 +3,11 @@
     padding: 24px;
     background-color: #F4F7FD;
     height: calc(100vh - 96px);
+
+    &__isEmpty {
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 .addColumn {
@@ -24,4 +29,18 @@
     &:hover {
         color: $main-purple;
     }
+}
+
+.emptyBoardText {
+    color: $medium-grey;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 32px;
+}
+
+.emptyBoardTextWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }

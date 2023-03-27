@@ -3,6 +3,7 @@ import Styles from '../styles/main.module.css';
 import { SideBar } from '../components/side-bar';
 import { BoardHeader } from '../components/board-header';
 import { Board } from '../components/board';
+import { EmptyBoard } from '../components/empty-board';
 import Modal from '../components/modal';
 import { FormEvent, ReactNode, useEffect, useState } from 'react';
 import axios from 'axios';
@@ -13,11 +14,13 @@ import { serializeTaskData, serializeBoardData } from '../lib/serializers/serial
 import { Task } from '@/lib/models/task';
 import  { Board as BoardModel } from '@/lib/models/board';
 import AddBoardModal from '@/components/add-board-modal';
+import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies
+// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies, createColumns in create board
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
+  const [taskCount, setTaskCount] = useState(0);
   const [activeBoardId, setActiveBoardId] = useState(1);
   const [columns, setColumns] = useState<Column[]>([]);
   const [allTasks, setTasks] = useState<Task[]>([]);
@@ -71,16 +74,17 @@ export default function Home() {
     };
 
     fetchColumns();
-  });
+  }, [activeBoardId]);
 
   useEffect(() => {
     const fetchTasks = async () => {
       const result = await axios.get(`http://localhost:8000/boards/board/${activeBoardId}/tasks`);
       setTasks(result.data);
+      setTaskCount(result.data.length);
     };
 
     fetchTasks();
-  });
+  }, [activeBoardId, taskCount]);
 
 function handleSelectedBoard(id: number) {
   setActiveBoardId(id) 
@@ -149,7 +153,7 @@ function handleSelectedBoard(id: number) {
       ...serializeTaskData(formJson),
       board: activeBoardId
     };
-    console.log(postBody)
+    setTaskCount(taskCount + 1);
 
     await axios.post('http://localhost:8000/boards/task', postBody);
     setIsAddTaskModalOpen(false);
@@ -163,6 +167,18 @@ function handleSelectedBoard(id: number) {
     let postBody = serializeBoardData(formJson);
     await axios.post('http://localhost:8000/boards/board', { name: postBody.name });
     await createColumns(postBody.columns);
+  }
+
+  async function createColumn(formJson) {
+    setIsAddColumnModalOpen(false);
+    setIsOpen(false);
+
+    let data = {
+      board: activeBoardId,
+      ...formJson
+    }
+    
+    await axios.post('http://localhost:8000/boards/column', data);
   }
 
   async function createColumns(columns) {
@@ -194,9 +210,13 @@ function handleSelectedBoard(id: number) {
     <div className={Styles.container}>
         <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal} handleSelectedBoard={handleSelectedBoard}></SideBar>
         <div className={Styles.boardContainer}>
-            <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal}></BoardHeader>
+            <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
             <div className={Styles.board}>
+              {columns.length ? 
                 <Board name={board.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
+                :
+                <EmptyBoard handleAddColumn={openAddColumnModal}></EmptyBoard>
+              }
             </div>
         </div>
         {isAddTaskModalOpen && 
@@ -216,8 +236,8 @@ function handleSelectedBoard(id: number) {
           </Modal>
         }
         {isAddColumnModalOpen && 
-          <Modal handleClose={closeAddColumnModal} isOpen={isOpen}>
-            This is the add column modal
+          <Modal handleClose={closeAddColumnModal} isOpen={isOpen} title='Add New Column'>
+            <AddColumnModal createColumn={createColumn}></AddColumnModal>
           </Modal>
         }
         {isAddBoardModalOpen && 

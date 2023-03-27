@@ -1,8 +1,6 @@
-import axios from 'axios';
-import { useState, useEffect } from 'react';
 import styles from '../styles/column.module.scss';
 import TaskCard from './task-card';
-import { Task, Task as TaskModel } from '../lib/models/task';
+import { Task } from '../lib/models/task';
 
 interface ColumnProps {
     key: string;
@@ -12,12 +10,14 @@ interface ColumnProps {
     handleOpenTask: () => void;
 }
 
-// TODO: show color next to column name
 export function Column(props: ColumnProps) {
     let columnColorModifier = `columnName__${props.color}`;
     return (
             <div key={props.name} className={styles.column}>
-                <div className={`${styles.columnName} ${styles[columnColorModifier]}`}>{props.name}</div>                
+                <div className={styles.columnHeader}>
+                    <div className={styles.color} style={{backgroundColor: props.color}}></div>
+                    <div className={styles.columnName}>{props.name}</div>                
+                </div>
                 {                    
                     props.tasks.map(task => (
                         <TaskCard 

@@ -11,7 +11,7 @@ interface AddTaskModalProps {
 }
 
 
-// TODO: required fields, create task
+// TODO: required fields, create sub tasks
 export default function AddTaskModal(props: AddTaskModalProps) {
     // [erroredFields, setErroredFields] = useState({});
 
