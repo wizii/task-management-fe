@@ -16,7 +16,7 @@ export function Column(props: ColumnProps) {
             <div key={props.name} className={styles.column}>
                 <div className={styles.columnHeader}>
                     <div className={styles.color} style={{backgroundColor: props.color}}></div>
-                    <div className={styles.columnName}>{props.name}</div>                
+                    <div className={styles.columnName}>{props.name} ({props.tasks.length})</div>                
                 </div>
                 {                    
                     props.tasks.map(task => (
