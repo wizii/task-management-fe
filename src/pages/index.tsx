@@ -29,7 +29,6 @@ type ModalProps = {
   }
 }
 
-// TODO: responsive, error handling, (layout and routes), saving activeBoardState, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [activeBoard, setActiveBoard] = useState<BoardModel[]>({});
@@ -83,7 +82,6 @@ export default function Home() {
         title: 'Add New Column'
       })
     } else if (modalName === 'TaskModal') {
-      console.log(options)
       let task = getParentTasks().find(task => task.id === options.id);
       modal = TaskModal({
         name: task?.name,
@@ -163,15 +161,11 @@ export default function Home() {
 
   useEffect(() => {
     const id = window.localStorage.getItem('activeBoardId');
-    if(id == null) {
-      setActiveBoardId(id)
-    } else {
-      setActiveBoardId(1);
-    }
+    setActiveBoardId(id);
   }, []);
 
   useEffect(() => {
-    localStorage.setItem('activeBoardId', JSON.stringify(activeBoardId));
+    localStorage.setItem('activeBoardId', activeBoardId);
   }, [activeBoardId]);
 
   useEffect(() => {
@@ -190,7 +184,13 @@ export default function Home() {
       setColumnCount(result.data.length);
     };
 
-    if (activeBoardId) fetchColumns();
+    if (activeBoardId) {
+      try {
+        fetchColumns();
+      } catch(e) {
+        console.log('An error occured while fetching the columns', e);
+      }
+    }
   }, [activeBoardId, columnCount]);
 
   useEffect(() => {
@@ -200,7 +200,13 @@ export default function Home() {
       setTaskCount(result.data.length);
     };
 
-    if (activeBoardId) fetchTasks();
+    if (activeBoardId) {
+      try {
+        fetchTasks();
+      } catch(e) {
+        console.log('An error occured while fetching the tasks', e);
+      }
+    }
   }, [activeBoardId, taskCount]);
 
 function handleSelectedBoard(id: number) {
@@ -211,7 +217,6 @@ function handleSelectedBoard(id: number) {
   function closeDeleteTaskModal() {
     setIsOpen(false);
     setIsDeleteTaskModalOpen(false);
-    // TODO: separate
     setIsDeleteBoardModalOpen(false);
   }
 
@@ -225,7 +230,6 @@ function handleSelectedBoard(id: number) {
     setTaskCount(taskCount + 1);
 
     let response = await axios.post('http://localhost:8000/boards/task', postBody);
-    console.log(postBody.subtasks)
     await createSubtasks(response.data.id, postBody.subtasks)
   }
 
