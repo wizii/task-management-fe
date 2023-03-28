@@ -286,7 +286,7 @@ function handleSelectedBoard(id: number) {
     try {
       await axios.post('http://localhost:8000/boards/tasks', data);
     } catch(e) {
-      console.log('An error occured while creating tasks');
+      console.log('An error occured while creating tasks', e);
     }
   }
 
