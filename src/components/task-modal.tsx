@@ -17,7 +17,7 @@ export function TaskModal({name, description, selectedColumnId, subtasks, column
     return (
         <div>
             <div className={`${modalStyles.section} ${styles.description}`}>{description}</div>
-            {subtasks.length &&
+            {subtasks.length > 0 ?
                 <div className={`${modalStyles.section} ${styles.subtasks}`}>
                     <div className={`${styles.label} ${styles.label__marginBottom16}`}>Subtasks (completed of {subtasks.length})</div>
                     {subtasks.map(subtask => (
@@ -26,7 +26,7 @@ export function TaskModal({name, description, selectedColumnId, subtasks, column
                         </div>
                     ))
                     }
-                </div>
+                </div> : <></>
             }
             <div className={modalStyles.section}>
                 <div className={`${styles.label} ${styles.label__marginBottom8}`}>Current Status</div>

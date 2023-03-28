@@ -15,6 +15,10 @@
     }
   }
 
+  &__isDisabled {
+    background: rgba(99, 95, 199, 0.25);
+  }
+
   &__red {
     background-color: $red;
 

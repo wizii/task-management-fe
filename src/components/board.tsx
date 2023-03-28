@@ -12,13 +12,12 @@ interface BoardProps {
     handleOpenAddColumnModal: () => void;
 }
 
-// TODO: edit, delete
 export function Board(props: BoardProps) {
     return (
         <div className={styles.board}>
             {
-                props.columns.map(column => (
-                    <Column key={column.name} name={column.name} color={column.color} tasks={column.tasks} handleOpenTask={props.handleOpenTaskModal}></Column>
+                props.columns.map((column, index) => (
+                    <Column key={index} name={column.name} color={column.color} tasks={column.tasks} handleOpenTask={props.handleOpenTaskModal}></Column>
                 ))
             }
             <div className={styles.addColumn}>

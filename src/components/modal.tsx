@@ -15,7 +15,7 @@ interface ModalProps {
     }[]
 }
 
-// TODO: close when clicking outside
+// Modal closes by pressing escape key
 export default function Modal({ children, isOpen, title, hasDotsMenu, actions, handleClose, titleModifiers }: ModalProps) {  
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   useEffect(() => {

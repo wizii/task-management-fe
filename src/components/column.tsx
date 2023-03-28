@@ -4,7 +4,7 @@ import { Task } from '../lib/models/task';
 
 interface ColumnProps {
     key: string;
-    color: string;
+    color?: string;
     name: string;
     tasks: Task[];
     handleOpenTask: () => void;
@@ -18,9 +18,9 @@ export function Column(props: ColumnProps) {
                     <div className={styles.columnName}>{props.name} ({props.tasks.length})</div>                
                 </div>
                 {                    
-                    props.tasks.map(task => (
+                    props.tasks.map((task, index) => (
                         <TaskCard 
-                            key={task.name}
+                            key={index}
                             name={task.name}
                             id={task.id}
                             subtasks={task.subtasks}

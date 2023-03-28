@@ -16,7 +16,7 @@ interface HeaderProps {
     handleAddTask: () => void;
 }
 
-// TODO: board name disabled button color
+// TODO:disabled button color
 export function BoardHeader(props: HeaderProps) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isSideBarPopupOpen, setIsSideBarPopupOpen] = useState(false);
@@ -44,13 +44,13 @@ export function BoardHeader(props: HeaderProps) {
             }
         <div className={styles.permanentItems}>
             <div className={styles.boardNameContainer}>
-                <div className={styles.boardName}>{props.boardName ? props.boardName : 'Board Name'}
+                <div className={styles.boardName}>{props.boardName}
                     <div className={`${styles.sideBarButton} ${isSideBarPopupOpen ? styles.sideBarButton__isUp : ''}`} onClick={toggleSideBarPopup}></div>
                 </div>
             </div>
             <div className={styles.headerActions}>
                 <button 
-                    className={`${buttonStyles.button} ${buttonStyles.button__mainPurple} ${buttonStyles.button__height40} ${styles.addTaskButton}`}
+                    className={`${buttonStyles.button} ${buttonStyles.button__height40} ${styles.addTaskButton} ${!props.currentBoardHasColumns ? buttonStyles.button__isDisabled : buttonStyles.button__mainPurple}  `}
                     onClick={props.handleAddTask}
                     disabled={!props.currentBoardHasColumns}
                 >

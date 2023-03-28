@@ -9,15 +9,11 @@ interface AddColumnModalProps {
     createColumn: () => void;
 }
 
-// TODO: required fields, color picker css
 export default function AddColumnModal(props: AddColumnModalProps) {
     const [columnCount, setColumnCount] = useState(1);
     const [columns, setColumns] = useState([{ id: 1, name: ''}]);
-    // [erroredFields, setErroredFields] = useState({});
 
-    const requiredFields = ['title', 'column'];
-
-    function validateData(e: FormEvent<HTMLFormElement>) {
+    function sendData(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
         let form = e.target as HTMLFormElement;
         let formData = new FormData(form);
@@ -27,7 +23,7 @@ export default function AddColumnModal(props: AddColumnModalProps) {
     }
 
     return (
-        <form onSubmit={validateData}>
+        <form onSubmit={sendData}>
             <div className={modalStyles.section}>
                 <div className={modalStyles.label}> Name </div>
                 <input

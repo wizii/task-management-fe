@@ -1,18 +1,18 @@
 import modalStyles from '../styles/modal.module.scss';
 import buttonStyles from '../styles/button.module.scss';
 
-interface DeleteTaskModalProps {
-    taskName: string;
+interface DeleteModalProps {
+    text: string;
     handleCancel: () => void;
     handleDelete: () => void;
 }
 
-export function DeleteTaskModal({taskName, handleCancel, handleDelete}: DeleteTaskModalProps) {
+export function DeleteModal({text, handleCancel, handleDelete}: DeleteModalProps) {
     return (
         <div>
             <div className={modalStyles.section}>
                 <div className={modalStyles.text}>
-                    Are you sure you want to delete the '{taskName}' and its subtasks? This action cannot be reversed.
+                    {text}
                 </div>
             </div>
             <div className={modalStyles.section}>

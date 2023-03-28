@@ -10,15 +10,11 @@ interface AddTaskModalProps {
     createTask: (e: FormEvent<HTMLFormElement>) => void;
 }
 
-
-// TODO: required fields, create sub tasks
 export default function AddTaskModal(props: AddTaskModalProps) {
     const [subtaskCount, setSubtaskCount] = useState(1);
     const [subtasks, setSubtasks] = useState([{ id: 1, name: '' }]);
 
-    const requiredFields = ['title', 'column'];
-
-    function validateData(e: FormEvent<HTMLFormElement>) {
+    function sendData(e: FormEvent<HTMLFormElement>) {
         e.preventDefault()
         let form = e.target as HTMLFormElement;
         let formData = new FormData(form);
@@ -38,7 +34,7 @@ export default function AddTaskModal(props: AddTaskModalProps) {
     }
 
     return (
-        <form onSubmit={validateData}>
+        <form onSubmit={sendData}>
             <div className={modalStyles.section}>
                 <div className={modalStyles.label}>Title</div>
                 <input
@@ -69,6 +65,7 @@ export default function AddTaskModal(props: AddTaskModalProps) {
                             id={`subtask-${subtask.id}`}
                             className={modalStyles.input} 
                             placeholder='e.g. Make coffee'
+                            required
                         />
                     </RemovableField>
                 ))} 

@@ -2,7 +2,9 @@ import styles from '../styles/board.module.scss';
 import buttonStyles from '../styles/button.module.scss';
 
 interface EmptyBoardProps {
-    handleAddColumn: () => void;
+    handleAdd: () => void;
+    text: string;
+    buttonText: string;
 }
 
 export function EmptyBoard(props: EmptyBoardProps) {
@@ -10,11 +12,11 @@ export function EmptyBoard(props: EmptyBoardProps) {
         <div className={`${styles.board} ${styles.board__isEmpty}`}>
             <div className={styles.emptyBoardTextWrapper}>
                 <div className={styles.emptyBoardText}>
-                    This board is empty. Create a new column to get started.
+                    {props.text}
                 </div>
                 <button 
                     type='button'
-                    onClick={props.handleAddColumn}
+                    onClick={props.handleAdd}
                     className={`
                         ${buttonStyles.button}
                         ${buttonStyles.button__mainPurple} 
@@ -22,7 +24,7 @@ export function EmptyBoard(props: EmptyBoardProps) {
                         ${buttonStyles.button__width174}
                     `}
                 >
-                    + Add New Column
+                    {props.buttonText}
                 </button>
             </div>
             

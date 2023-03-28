@@ -29,9 +29,9 @@ export function SideBarPopup(props: SideBarPopupProps) {
         <>
             <div className={styles.sidebar}>
             <SideBarItem modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
-            {props.boards.map(board => 
+            {props.boards.map((board, index) => 
                 <SideBarItem 
-                    key={board.name}
+                    key={index}
                     isSelected={board.id === props.activeBoardId}
                     modifiers={['hasIcon', 'boardLink']}
                     onClick={() => props.handleSelectedBoard(board.id)}
