@@ -1,7 +1,8 @@
 import styles from '@/styles/side-bar.module.scss';
-import { LogoIcon } from '../components/logo-icon';
 import { ToggleButton } from './toggle-button';
 import SideBarItem from './sidebar-item';
+import { useState } from 'react';
+import { Logo } from './logo';
 
 interface SideBarProps {
     handleSelectedBoard: (id: number) => void;
@@ -19,17 +20,25 @@ interface SideBarProps {
         }
     ]
     handleOpenAddBoardModal: () => void;
+    toggleSideBar: (value: boolean) => void;
 }
 
-// TODO: Fix logo, Fix checkbox, active state of selected board,hide sidebar
 export function SideBar(props: SideBarProps) {
-    const boardCount = props.boards?.length ?? 0; 
+    const [isSideBarVisible, setIsSideBarVisible] = useState(true);
+    const boardCount = props.boards?.length ?? 0;
+
+    function toggleSideBar(value: boolean) {
+        setIsSideBarVisible(value);
+        props.toggleSideBar(value);
+    }
+
     return (
-        <div className={styles.sidebar}>
-            <div className={styles.logo}>
-                <LogoIcon theme='light'></LogoIcon>
-                Kanban
-            </div>
+        <>
+        {isSideBarVisible ? 
+            <div className={styles.sidebar}>
+                <div className={styles.logoContainer}>
+                    <Logo></Logo>
+                </div>
             <SideBarItem modifiers={['allBoards']}>All Boards ({boardCount})</SideBarItem>
             {props.boards.map(board => 
                 <SideBarItem 
@@ -45,13 +54,19 @@ export function SideBar(props: SideBarProps) {
             <SideBarItem modifiers={['hasIcon', 'createBoardLink']} onClick={props.handleOpenAddBoardModal}>+ Create New Board</SideBarItem>
             
             <div className={styles.sidebar_footer}>
-                <div className={`${styles.sidebar_item} ${styles.toggleTheme}`}>
+                <SideBarItem modifiers={['toggleTheme']}>
                     <div className={`${styles.themeIcon} ${styles.themeIcon__sun}`}></div>
-                    <ToggleButton></ToggleButton>
+                        <ToggleButton></ToggleButton>
                     <div className={`${styles.themeIcon} ${styles.themeIcon__moon}`}></div>
+                </SideBarItem>
                 </div>
-                <SideBarItem modifiers={['hasIcon', 'hideSidebar']}>Hide Sidebar</SideBarItem>
+                <SideBarItem modifiers={['hasIcon', 'hideSidebar']} onClick={() => toggleSideBar(false)}>Hide Sidebar</SideBarItem>
             </div>
-        </div>
+         : <div className={styles.showSideBar} onClick={() => toggleSideBar(true)}>
+            <div className={styles.showSideBarIcon}></div>
+         </div>
+        }
+        </>
+        
     )
 }

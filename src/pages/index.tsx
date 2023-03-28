@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Styles from '../styles/main.module.css';
+import Styles from '../styles/index.module.css';
 import { SideBar } from '../components/side-bar';
 import { BoardHeader } from '../components/board-header';
 import { Board } from '../components/board';
@@ -17,9 +17,10 @@ import AddBoardModal from '@/components/add-board-modal';
 import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-// TODO: responsive, toggle theme, error handling, (layout and routes), useEffect dependencies, createColumns in create board, deleting all boards (empty)?
+// TODO: responsive, error handling, (layout and routes), useEffect dependencies, createColumns in create board, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
+  const [activeBoard, setActiveBoard] = useState<BoardModel[]>({});
   const [taskCount, setTaskCount] = useState(0);
   const [activeBoardId, setActiveBoardId] = useState(1);
   const [columns, setColumns] = useState<Column[]>([]);
@@ -32,8 +33,7 @@ export default function Home() {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [taskModal, setTaskModal] = useState<ReactNode>();
   const [openTask, setOpenTask] = useState<Task>();
-
-  const board = boards.filter(board => board.id === activeBoardId);
+  const [isSideBarVisible, setIsSideBarVisible] = useState(true);
 
   const taskModalActions = [{
     name: 'Edit Task',
@@ -61,11 +61,11 @@ export default function Home() {
   useEffect(() => {
     const fetchBoards = async () => {
       const result = await axios.get('http://localhost:8000/boards');
-      setBoards(result.data);
+      setBoards(result.data);      
     };
 
     fetchBoards();
-  });
+  }, []);
 
   useEffect(() => {
     const fetchColumns = async () => {
@@ -87,7 +87,8 @@ export default function Home() {
   }, [activeBoardId, taskCount]);
 
 function handleSelectedBoard(id: number) {
-  setActiveBoardId(id) 
+  setActiveBoardId(id);
+  setActiveBoard(boards.filter(board => board.id === id));
 }
 
   function openAddTaskModal() {
@@ -203,6 +204,10 @@ function handleSelectedBoard(id: number) {
     }));
   }
 
+  function toggleSideBar(value: boolean) {
+    setIsSideBarVisible(value);
+  }
+
   return (
     <div>
         <Head>
@@ -210,12 +215,12 @@ function handleSelectedBoard(id: number) {
           <meta name="description" content="Task Management" />
       </Head>
     <div className={Styles.container}>
-        <SideBar boards={boards} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
+        <SideBar boards={boards} toggleSideBar={toggleSideBar} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
         <div className={Styles.boardContainer}>
-            <BoardHeader boardName={board.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
+            <BoardHeader isSideBarVisibile={isSideBarVisible} boardName={activeBoard.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
             <div className={Styles.board}>
               {columns.length ? 
-                <Board name={board.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
+                <Board name={activeBoard.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
                 :
                 <EmptyBoard handleAddColumn={openAddColumnModal}></EmptyBoard>
               }

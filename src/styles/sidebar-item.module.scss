@@ -24,6 +24,7 @@
     }
 
     &__hideSidebar {
+        color: $medium-grey;
         &:before {
             background-image: url('/icons/eye-icon.svg');
             width: 18px;
@@ -53,5 +54,15 @@
         &:before {
             background-image: url('/icons/board-white.svg');
         }
+    }
+
+    &__toggleTheme {
+        width: 250px;
+        background-color: #F4F7FD;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 6px;
+        margin-bottom: 22px;
     }
 }

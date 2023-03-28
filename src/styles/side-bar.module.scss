@@ -22,23 +22,6 @@
     flex: 1;
 }
 
-.logo {
-    display: flex;
-    width: 152px;
-    margin-bottom: 55px;
-    font-size: 24px;
-}
-
-.toggleTheme {
-    width: 250px;
-    background-color: #F4F7FD;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 6px;
-    margin-bottom: 22px;
-}
-
 .themeIcon{
     height: 19px;
     width: 19px;
@@ -51,4 +34,26 @@
 
 .themeIcon__moon{
     background-image: url('/icons/moon.svg');
+}
+
+.showSideBarIcon {
+    background-image: url('/icons/open-eye.svg');
+    height: 10px;
+    width: 16px;
+}
+
+.showSideBar {
+    width: 56px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: $main-purple;
+    border-radius: 0px 100px 100px 0px;
+    position: absolute;
+    bottom: 32px;
+}
+
+.logoContainer {
+    margin-bottom: 55px;
 }
