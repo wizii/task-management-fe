@@ -17,6 +17,18 @@ import AddBoardModal from '@/components/add-board-modal';
 import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
+type ModalName =  'AddTaskModal' | 'AddColumnModal' | 'TaskModal' | 'AddBoardModal';
+
+type ModalProps = {
+  title: string;
+  modifiers?: string[];
+  hasDotsMenu?: boolean;
+  actions?: {
+    name: string;
+    function: () => void;
+  }
+}
+
 // TODO: responsive, error handling, (layout and routes), saving activeBoardState, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
@@ -28,12 +40,14 @@ export default function Home() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
-  const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
-  const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+
+  // Modal
   const [isDeleteBoardModalOpen, setIsDeleteBoardModalOpen] = useState(false);
-  const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
-  const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+
+  const [modal, setModal] = useState<ReactNode>();
+  const [modalProps, setModalProps] = useState<ModalProps>();
+  
   const [taskModal, setTaskModal] = useState<ReactNode>();
   const [openTask, setOpenTask] = useState<Task>();
   const [isSideBarVisible, setIsSideBarVisible] = useState(true);
@@ -56,8 +70,52 @@ export default function Home() {
     isRed: true
   }];
 
+  function openModal(modalName: ModalName, options = {}) { 
+    let modal = <></>
+    if (modalName === 'AddTaskModal') {
+      modal = <AddTaskModal columns={columns} createTask={createTask}></AddTaskModal>
+      setModalProps({
+        title: 'Add New Task'
+      })
+    } else if (modalName === 'AddColumnModal') {
+      modal = <AddColumnModal createColumn={createColumn}></AddColumnModal>
+      setModalProps({
+        title: 'Add New Column'
+      })
+    } else if (modalName === 'TaskModal') {
+      console.log(options)
+      let task = getParentTasks().find(task => task.id === options.id);
+      modal = TaskModal({
+        name: task?.name,
+        description: task?.description,
+        selectedColumnId: task?.column,
+        subtasks: task?.subtasks,
+        columns: columns
+      });
+      setModalProps({
+        title: task?.name,
+        hasDotsMenu: true,
+        actions: taskModalActions
+      })
+      setOpenTask(task);
+    } else if (modalName === 'AddBoardModal') {
+      modal = <AddBoardModal createBoard={createBoard}></AddBoardModal>
+      setModalProps({
+        title: 'Add New Board'
+      })
+    }
+    setModal(modal);
+    setIsOpen(true);
+  }
+
+  function closeModal() {
+    setIsOpen(false);
+    setModal(<></>)
+  }
+
   function handleDeleteTask() {
-    setIsTaskModalOpen(false);
+    closeModal();
+    setIsOpen(true);
     setIsDeleteTaskModalOpen(true);
   }
   
@@ -67,11 +125,15 @@ export default function Home() {
   }
 
   async function deleteTask() {
+    try {
+      await axios.delete(`http://localhost:8000/boards/task/${openTask.id}`);
+    } catch (e) {
+      console.log('An error occured while deleting the task', e)
+    }
+    
     setIsDeleteTaskModalOpen(false);
-    setIsOpen(false);
-    await axios.delete('http://localhost:8000/boards/task', {
-      id: openTask?.id
-    });
+    closeModal()
+    setTaskCount(taskCount - 1);
   }
 
   async function deleteBoard() {
@@ -146,48 +208,6 @@ function handleSelectedBoard(id: number) {
   setActiveBoard(boards.filter(board => board.id === id));
 }
 
-  function openAddTaskModal() {
-    setIsAddTaskModalOpen(true);
-    setIsOpen(true);
-  }
-
-  function openTaskModal(id: number) {
-    let task = getParentTasks().find(task => task.id === id);
-    let taskModal = TaskModal({
-      name: task?.name,
-      description: task?.description,
-      selectedColumnId: task?.column,
-      subtasks: task?.subtasks,
-      columns: columns
-    });
-    setTaskModal(taskModal);
-    setOpenTask(task);
-    setIsTaskModalOpen(true);
-    setIsOpen(true);
-  }
-
-  // TODO: refactor: DRY
-
-  function openAddColumnModal() {
-    setIsAddColumnModalOpen(true);
-    setIsOpen(true);
-  }
-
-  function openAddBoardModal() {
-    setIsAddBoardModalOpen(true);
-    setIsOpen(true);
-  }
-
-  function closeAddTaskModal() {
-    setIsOpen(false);
-    setIsAddTaskModalOpen(false);
-  }
-
-  function closeAddColumnModal() {
-    setIsOpen(false);
-    setIsAddColumnModalOpen(false);
-  }
-
   function closeDeleteTaskModal() {
     setIsOpen(false);
     setIsDeleteTaskModalOpen(false);
@@ -195,18 +215,7 @@ function handleSelectedBoard(id: number) {
     setIsDeleteBoardModalOpen(false);
   }
 
-  function closeAddBoardModal() {
-    setIsOpen(false);
-    setIsAddBoardModalOpen(false);
-  }
-
-  function closeTaskModal() {
-    setIsOpen(false);
-    setIsTaskModalOpen(false);
-  }
-
   async function createTask(formJson) {
-    setIsAddTaskModalOpen(false);
     setIsOpen(false);
 
     let postBody = {
@@ -221,7 +230,6 @@ function handleSelectedBoard(id: number) {
   }
 
   async function createBoard(formJson) {
-    setIsAddTaskModalOpen(false);
     setIsOpen(false);
     
     let postBody = serializeBoardData(formJson);
@@ -231,7 +239,6 @@ function handleSelectedBoard(id: number) {
   }
 
   async function createColumn(formJson) {
-    setIsAddColumnModalOpen(false);
     setIsOpen(false);
 
     let data = {
@@ -288,47 +295,45 @@ function handleSelectedBoard(id: number) {
           <meta name="description" content="Task Management" />
       </Head>
     <div className={Styles.container}>
-        <SideBar boards={boards} toggleSideBar={toggleSideBar} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
+        <SideBar 
+          boards={boards}
+          toggleSideBar={toggleSideBar}
+          handleOpenAddBoardModal={() => openModal('AddBoardModal')}
+          activeBoardId={activeBoardId}
+          handleSelectedBoard={handleSelectedBoard}
+        />
         <div className={`${Styles.boardContainer} ${!isSideBarVisible ? Styles.boardContainer__fullWidth : ''}`}>
             <BoardHeader
               isSideBarVisibile={isSideBarVisible}
               boardName={activeBoard.name}
-              handleAddTask={openAddTaskModal}
+              handleAddTask={() => openModal('AddTaskModal')}
               currentBoardHasColumns={!!columns.length}
               actions={boardActions}
             />
             <div className={Styles.board}>
               {columns.length ? 
-                <Board isSideBarVisible={isSideBarVisible} name={activeBoard.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
+                <Board 
+                  isSideBarVisible={isSideBarVisible}
+                  name={activeBoard.name}
+                  columns={getColumnsWithTasks()}
+                  handleOpenTaskModal={(id) => openModal('TaskModal', { id })}
+                  handleOpenAddColumnModal={() => openModal('AddColumnModal')}
+                />
                 :
-                <EmptyBoard handleAddColumn={openAddColumnModal}></EmptyBoard>
+                <EmptyBoard handleAddColumn={() => openModal('AddColumnModal')}></EmptyBoard>
               }
             </div>
         </div>
-        {isAddTaskModalOpen && 
-          <Modal handleClose={closeAddTaskModal} isOpen={isOpen} title='Add New Task'>
-            <AddTaskModal columns={columns} createTask={createTask}></AddTaskModal>
-          </Modal>
-        }
-        {isTaskModalOpen && 
-          <Modal 
-            title={openTask?.name}
-            handleClose={closeTaskModal}
+        {isOpen &&
+          <Modal
+            handleClose={closeModal}
             isOpen={isOpen}
-            hasDotsMenu={true}
-            actions={taskModalActions}
+            title={modalProps?.title} 
+            titleModifiers={modalProps?.modifiers}
+            hasDotsMenu={modalProps?.hasDotsMenu}
+            actions={modalProps?.actions}
           >
-            {taskModal}
-          </Modal>
-        }
-        {isAddColumnModalOpen && 
-          <Modal handleClose={closeAddColumnModal} isOpen={isOpen} title='Add New Column'>
-            <AddColumnModal createColumn={createColumn}></AddColumnModal>
-          </Modal>
-        }
-        {isAddBoardModalOpen && 
-          <Modal handleClose={closeAddBoardModal} isOpen={isOpen} title={'Add New Board'}>
-            <AddBoardModal createBoard={createBoard}></AddBoardModal>
+            {modal}
           </Modal>
         }
         {isDeleteTaskModalOpen && 
@@ -337,8 +342,8 @@ function handleSelectedBoard(id: number) {
           </Modal>
         }
         {isDeleteBoardModalOpen && 
-          <Modal handleClose={closeDeleteTaskModal} isOpen={isOpen} title={'Delete this board?'} titleModifiers={['isRed']}>
-            <DeleteTaskModal handleCancel={closeDeleteTaskModal} handleDelete={deleteBoard}></DeleteTaskModal>
+          <Modal handleClose={closeModal} isOpen={isOpen} title={'Delete this board?'} titleModifiers={['isRed']}>
+            <DeleteTaskModal handleCancel={closeModal} handleDelete={deleteBoard}></DeleteTaskModal>
           </Modal>
         }
     </div>

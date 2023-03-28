@@ -4,13 +4,13 @@ import styles from '../styles/modal.module.scss';
 interface ModalProps {
     children: ReactNode;
     isOpen: boolean;
-    title: string;
+    title?: string;
     hasDotsMenu?: boolean;
     titleModifiers?: string[];
     handleClose: () => void;
     actions?: {
       name: string;
-      isRed: string;
+      isRed: boolean;
       function: () => void;
     }[]
 }
