@@ -1,0 +1,46 @@
+.sidebar {
+    position: absolute;
+    top: 112px;
+    left: 54px;
+    border-radius: 8px;
+    width: 264px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0px 10px 20px rgba(54, 78, 126, 0.25);
+    padding: 16px;
+    padding-left: 0;
+    background-color: #FFF;
+
+    @media (min-width: 376px) {
+        display: none;
+    }
+}
+
+.sidebar_footer {
+    padding-left: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    flex: 1;
+}
+
+.themeIcon{
+    height: 19px;
+    width: 19px;
+    background: center no-repeat;
+}
+
+.themeIcon__sun{
+    background-image: url('/icons/sun.svg');
+}
+
+.themeIcon__moon{
+    background-image: url('/icons/moon.svg');
+}
+
+.showSideBarIcon {
+    background-image: url('/icons/open-eye.svg');
+    height: 10px;
+    width: 16px;
+}

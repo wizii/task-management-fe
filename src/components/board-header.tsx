@@ -7,6 +7,7 @@ interface HeaderProps {
     boardName: string;
     currentBoardHasColumns: boolean;
     isSideBarVisibile: boolean;
+    showSideBarPopup: () => void;
     actions: {
         name: string;
         isRed: boolean;
@@ -15,12 +16,18 @@ interface HeaderProps {
     handleAddTask: () => void;
 }
 
-// TODO: board name, dots menu, disabled button color
+// TODO: board name disabled button color
 export function BoardHeader(props: HeaderProps) {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isSideBarPopupOpen, setIsSideBarPopupOpen] = useState(false);
 
   function togglePopup() {
     setIsPopupOpen(!isPopupOpen);
+  }
+
+  function toggleSideBarPopup() {
+    setIsSideBarPopupOpen(!isSideBarPopupOpen);
+    props.showSideBarPopup();
   }
 
   function handleActionClick(func: () => void) {
@@ -36,14 +43,17 @@ export function BoardHeader(props: HeaderProps) {
                 </div>
             }
         <div className={styles.permanentItems}>
-            <div className={styles.boardName}>{props.boardName}</div>
+            <div className={styles.boardNameContainer}>
+                <div className={styles.boardName}>{props.boardName ? props.boardName : 'Board Name'}
+                    <div className={`${styles.sideBarButton} ${isSideBarPopupOpen ? styles.sideBarButton__isUp : ''}`} onClick={toggleSideBarPopup}></div>
+                </div>
+            </div>
             <div className={styles.headerActions}>
                 <button 
                     className={`${buttonStyles.button} ${buttonStyles.button__mainPurple} ${buttonStyles.button__height40} ${styles.addTaskButton}`}
                     onClick={props.handleAddTask}
                     disabled={!props.currentBoardHasColumns}
                 >
-                    + Add New Task
                 </button>
                 <div className={styles.dotsMenu} onClick={togglePopup}></div>
             </div>

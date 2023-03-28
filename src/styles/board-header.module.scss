@@ -12,18 +12,59 @@
     display: flex;
 }
 
-.boardName {
+.boardNameContainer {
+    display: flex;
     flex: 1;
+}
+
+.sideBarButton {
+    display: none;
+
+    @media (max-width: 375px) {
+        margin-left: 8px;
+        display: inline-block;
+        background: no-repeat;
+        background-image: url('/icons/chevron-down.svg');
+        width: 10px;
+        height: 8px;
+
+        &__isUp {
+            background-image: url('/icons/chevron-up.svg');
+        }
+    }
+}
+
+.boardName {
     font-size: 24px;
     font-weight: 700;
+        
+    @media (max-width: 375px) {
+        font-size: 18px;
+    }
 }
 
 .addTaskButton {
     border-radius: 24px;
-    padding: 0 24px;
     font-size: 15px;
     height: 48px;
     margin-right: 24px;
+    padding: 0 24px;
+
+    &:after {
+        
+        content: '+ Add New Task';
+        display: inline-block;
+    }
+
+    @media (max-width: 375px) {
+        padding: 0 18px;
+
+        &:after {
+            content: '+';
+            display: inline-block;
+        }
+    }
+    
 }
 
 .dotsMenu {

@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import Styles from '../styles/index.module.scss';
 import { SideBar } from '../components/side-bar';
+import { SideBarPopup } from '../components/side-bar-popup';
 import { BoardHeader } from '../components/board-header';
 import { Board } from '../components/board';
 import { EmptyBoard } from '../components/empty-board';
@@ -39,6 +40,8 @@ export default function Home() {
   const [columns, setColumns] = useState<Column[]>([]);
   const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [isSideBarPopupOpen, setIsSideBarPopupOpen] = useState(false);
 
   // Modal
   const [isDeleteBoardModalOpen, setIsDeleteBoardModalOpen] = useState(false);
@@ -292,6 +295,10 @@ function handleSelectedBoard(id: number) {
     setIsSideBarVisible(value);
   }
 
+  function toggleSideBarPopup() {
+    setIsSideBarPopupOpen(!isSideBarPopupOpen);
+  }
+
   return (
     <div>
         <Head>
@@ -306,9 +313,19 @@ function handleSelectedBoard(id: number) {
           activeBoardId={activeBoardId}
           handleSelectedBoard={handleSelectedBoard}
         />
-        <div className={`${Styles.boardContainer} ${!isSideBarVisible ? Styles.boardContainer__fullWidth : ''}`}>
+        {isSideBarPopupOpen &&
+          <SideBarPopup 
+            boards={boards}
+            toggleSideBar={toggleSideBar}
+            handleOpenAddBoardModal={() => openModal('AddBoardModal')}
+            activeBoardId={activeBoardId}
+            handleSelectedBoard={handleSelectedBoard}
+        />
+        }
+        <div className={Styles.boardContainer}>
             <BoardHeader
               isSideBarVisibile={isSideBarVisible}
+              showSideBarPopup={toggleSideBarPopup}
               boardName={activeBoard.name}
               handleAddTask={() => openModal('AddTaskModal')}
               currentBoardHasColumns={!!columns.length}
