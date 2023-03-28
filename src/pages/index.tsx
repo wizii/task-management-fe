@@ -149,6 +149,9 @@ function handleSelectedBoard(id: number) {
   }
 
   async function createTask(formJson) {
+    setIsAddTaskModalOpen(false);
+    setIsOpen(false);
+
     let postBody = {
       CRUDFlag: 'C',
       ...serializeTaskData(formJson),
@@ -156,9 +159,9 @@ function handleSelectedBoard(id: number) {
     };
     setTaskCount(taskCount + 1);
 
-    await axios.post('http://localhost:8000/boards/task', postBody);
-    setIsAddTaskModalOpen(false);
-    setIsOpen(false);
+    let response = await axios.post('http://localhost:8000/boards/task', postBody);
+    console.log(postBody.subtasks)
+    await createSubtasks(response.data.id, postBody.subtasks)
   }
 
   async function createBoard(formJson) {
@@ -188,6 +191,15 @@ function handleSelectedBoard(id: number) {
       ...column
     }))
     await axios.post('http://localhost:8000/boards/columns', data);
+  }
+
+  async function createSubtasks(parentId, subtasks) {
+    let data = subtasks.map(subtask => ({
+      parent: parentId,
+      board: activeBoardId,
+      ...subtask
+    }))
+    await axios.post('http://localhost:8000/boards/tasks', data);
   }
 
   function getColumnsWithTasks() {

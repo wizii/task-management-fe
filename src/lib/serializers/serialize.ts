@@ -14,10 +14,18 @@ export function deserializeColumns(columns: Column[]) {
 }
 
 export function serializeTaskData(data: TaskData) {
+    let subtasks = Object.entries(data).filter(([key, value]) => {
+        return key.startsWith('subtask')
+    }).map (([key, value]) => ({
+        column: +data.column,
+        name: value
+    }));
+
     return {
         name: data.title,
         column: +data.column,
-        description: data.description
+        description: data.description,
+        subtasks: subtasks
     }
 }
 
