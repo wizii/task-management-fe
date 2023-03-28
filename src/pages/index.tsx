@@ -17,17 +17,20 @@ import AddBoardModal from '@/components/add-board-modal';
 import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-// TODO: responsive, error handling, (layout and routes), useEffect dependencies, deleting all boards (empty)?
+// TODO: responsive, error handling, (layout and routes), saving activeBoardState, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [activeBoard, setActiveBoard] = useState<BoardModel[]>({});
   const [taskCount, setTaskCount] = useState(0);
-  const [activeBoardId, setActiveBoardId] = useState(1);
+  const [columnCount, setColumnCount] = useState(0);
+  const [boardCount, setBoardCount] = useState(0);
+  const [activeBoardId, setActiveBoardId] = useState<number>();
   const [columns, setColumns] = useState<Column[]>([]);
   const [allTasks, setTasks] = useState<Task[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [isAddTaskModalOpen, setIsAddTaskModalOpen] = useState(false);
   const [isDeleteTaskModalOpen, setIsDeleteTaskModalOpen] = useState(false);
+  const [isDeleteBoardModalOpen, setIsDeleteBoardModalOpen] = useState(false);
   const [isAddColumnModalOpen, setIsAddColumnModalOpen] = useState(false);
   const [isAddBoardModalOpen, setIsAddBoardModalOpen] = useState(false);
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
@@ -44,19 +47,70 @@ export default function Home() {
     isRed: true
   }];
 
+  const boardActions = [{
+    name: 'Edit Board',
+    function: () => {}
+  },{
+    name: 'Delete Board',
+    function: handleDeleteBoard,
+    isRed: true
+  }];
+
   function handleDeleteTask() {
     setIsTaskModalOpen(false);
     setIsDeleteTaskModalOpen(true);
+  }
+  
+  function handleDeleteBoard() {
+    setIsOpen(true);
+    setIsDeleteBoardModalOpen(true);
   }
 
   async function deleteTask() {
     setIsDeleteTaskModalOpen(false);
     setIsOpen(false);
-    await axios.post('http://localhost:8000/boards/task', {
-      CRUDFlag: 'D',
+    await axios.delete('http://localhost:8000/boards/task', {
       id: openTask?.id
     });
   }
+
+  async function deleteBoard() {
+    setIsDeleteBoardModalOpen(false);
+    setIsOpen(false);
+
+    try {
+      // Delete tasks
+    await axios.delete('http://localhost:8000/boards/tasks', {
+      board: activeBoardId
+    });
+    setTaskCount(0);
+      // Delete columns
+    await axios.delete('http://localhost:8000/boards/columns', {
+        board: activeBoardId
+    });
+    setColumnCount(0);
+    // Delete board
+    await axios.delete(`http://localhost:8000/boards/board/${activeBoardId}`);
+    setActiveBoardId(0);
+
+    setBoardCount(boardCount - 1);
+    } catch(e) {
+      console.log('An error occured', e);
+    }
+  }
+
+  useEffect(() => {
+    const id = window.localStorage.getItem('activeBoardId');
+    if(id == null) {
+      setActiveBoardId(id)
+    } else {
+      setActiveBoardId(1);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('activeBoardId', JSON.stringify(activeBoardId));
+  }, [activeBoardId]);
 
   useEffect(() => {
     const fetchBoards = async () => {
@@ -65,16 +119,17 @@ export default function Home() {
     };
 
     fetchBoards();
-  }, []);
+  }, [boardCount]);
 
   useEffect(() => {
     const fetchColumns = async () => {
       const result = await axios.get(`http://localhost:8000/boards/board/${activeBoardId}/columns`);
       setColumns(result.data);
+      setColumnCount(result.data.length);
     };
 
-    fetchColumns();
-  }, [activeBoardId]);
+    if (activeBoardId) fetchColumns();
+  }, [activeBoardId, columnCount]);
 
   useEffect(() => {
     const fetchTasks = async () => {
@@ -83,7 +138,7 @@ export default function Home() {
       setTaskCount(result.data.length);
     };
 
-    fetchTasks();
+    if (activeBoardId) fetchTasks();
   }, [activeBoardId, taskCount]);
 
 function handleSelectedBoard(id: number) {
@@ -136,6 +191,8 @@ function handleSelectedBoard(id: number) {
   function closeDeleteTaskModal() {
     setIsOpen(false);
     setIsDeleteTaskModalOpen(false);
+    // TODO: separate
+    setIsDeleteBoardModalOpen(false);
   }
 
   function closeAddBoardModal() {
@@ -153,7 +210,6 @@ function handleSelectedBoard(id: number) {
     setIsOpen(false);
 
     let postBody = {
-      CRUDFlag: 'C',
       ...serializeTaskData(formJson),
       board: activeBoardId
     };
@@ -170,6 +226,7 @@ function handleSelectedBoard(id: number) {
     
     let postBody = serializeBoardData(formJson);
     let response = await axios.post('http://localhost:8000/boards/board', { name: postBody.name });
+    setBoardCount(boardCount + 1);
     await createColumns(response.data.id, postBody.columns);
   }
 
@@ -182,6 +239,8 @@ function handleSelectedBoard(id: number) {
       ...formJson
     }
     
+    setColumnCount(columnCount + 1);
+    
     await axios.post('http://localhost:8000/boards/column', data);
   }
 
@@ -190,6 +249,8 @@ function handleSelectedBoard(id: number) {
       board: boardId,
       ...column
     }))
+    setColumnCount(columnCount + data.length);
+
     await axios.post('http://localhost:8000/boards/columns', data);
   }
 
@@ -229,7 +290,13 @@ function handleSelectedBoard(id: number) {
     <div className={Styles.container}>
         <SideBar boards={boards} toggleSideBar={toggleSideBar} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
         <div className={`${Styles.boardContainer} ${!isSideBarVisible ? Styles.boardContainer__fullWidth : ''}`}>
-            <BoardHeader isSideBarVisibile={isSideBarVisible} boardName={activeBoard.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
+            <BoardHeader
+              isSideBarVisibile={isSideBarVisible}
+              boardName={activeBoard.name}
+              handleAddTask={openAddTaskModal}
+              currentBoardHasColumns={!!columns.length}
+              actions={boardActions}
+            />
             <div className={Styles.board}>
               {columns.length ? 
                 <Board isSideBarVisible={isSideBarVisible} name={activeBoard.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
@@ -267,6 +334,11 @@ function handleSelectedBoard(id: number) {
         {isDeleteTaskModalOpen && 
           <Modal handleClose={closeDeleteTaskModal} isOpen={isOpen} title={'Delete this task?'} titleModifiers={['isRed']}>
             <DeleteTaskModal handleCancel={closeDeleteTaskModal} handleDelete={deleteTask}></DeleteTaskModal>
+          </Modal>
+        }
+        {isDeleteBoardModalOpen && 
+          <Modal handleClose={closeDeleteTaskModal} isOpen={isOpen} title={'Delete this board?'} titleModifiers={['isRed']}>
+            <DeleteTaskModal handleCancel={closeDeleteTaskModal} handleDelete={deleteBoard}></DeleteTaskModal>
           </Modal>
         }
     </div>

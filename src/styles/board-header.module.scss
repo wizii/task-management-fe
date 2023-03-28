@@ -27,6 +27,7 @@
 }
 
 .dotsMenu {
+    cursor: pointer;
     height: 20px;
     width: 5px;
     background-image: url('/icons/vertical-dots.svg');
@@ -45,3 +46,34 @@
     height: 100%;
     border-right: 1px solid $light; 
 }
+
+// TODO: reuse popup
+
+.actionsPopup {
+    position: absolute;
+    border-radius: 8px;
+    z-index: 1000;
+    right: 24px;
+    top: 90px;
+    width: 192px;
+    display: flex;
+    flex-direction: column;
+    background-color: #FFF;
+    padding: 16px;
+  }
+  
+  .action {
+    height: 23px;
+    font-size: 13px;
+    font-weight: 500;
+    color: $medium-grey;
+    cursor: pointer;
+  
+    &__isRed {
+      color: $red;
+    }
+  
+    &:not(:last-child) {
+      margin-bottom: 16px;
+    }
+  }
