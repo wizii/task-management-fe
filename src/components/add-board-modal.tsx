@@ -64,8 +64,7 @@ export default function AddBoardModal(props: AddBoardModalProps) {
                 ))} 
                 </div>
                 : ''
-            }
-            
+            }  
             <div className={modalStyles.section}>
                 <button 
                     type='button'
@@ -79,7 +78,7 @@ export default function AddBoardModal(props: AddBoardModalProps) {
                 >
                     + Add New Column
                 </button>
-                </div>
+            </div>
             <div className={modalStyles.section}>
                 <button 
                     type='submit'

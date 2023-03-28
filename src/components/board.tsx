@@ -12,7 +12,7 @@ interface BoardProps {
     handleOpenAddColumnModal: () => void;
 }
 
-// TODO: edit, delete, empty state
+// TODO: edit, delete
 export function Board(props: BoardProps) {
     return (
         <div className={styles.board}>

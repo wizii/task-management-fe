@@ -13,7 +13,8 @@ interface AddTaskModalProps {
 
 // TODO: required fields, create sub tasks
 export default function AddTaskModal(props: AddTaskModalProps) {
-    // [erroredFields, setErroredFields] = useState({});
+    const [subtaskCount, setSubtaskCount] = useState(1);
+    const [subtasks, setSubtasks] = useState([{ id: 1, name: '' }]);
 
     const requiredFields = ['title', 'column'];
 
@@ -24,6 +25,16 @@ export default function AddTaskModal(props: AddTaskModalProps) {
         let formJson = Object.fromEntries(formData.entries());
         
         props.createTask(formJson);
+    }
+
+    function addSubtask() {
+        setSubtaskCount(subtaskCount + 1);
+        setSubtasks([...subtasks, { id: subtaskCount + 1, name: '' }]);
+    }
+
+    function removeSubtask(id: number) {
+        let remainingSubtasks = subtasks.filter(subtask => subtask.id !== id);
+        setSubtasks(remainingSubtasks);
     }
 
     return (
@@ -47,14 +58,36 @@ export default function AddTaskModal(props: AddTaskModalProps) {
                     placeholder="e.g. It's always good to take a break. This 15 minute break will recharge the batteries a little."
                 />
             </div>
-            <div className={modalStyles.section}>
+            {subtasks.length ? 
+                <div className={modalStyles.section}>
                 <div className={modalStyles.label}>Subtasks</div>
-                <RemovableField>
-                    <input name='subtask-1' className={`${modalStyles.input} ${styles.subTask}`} placeholder='e.g. Make coffee' />
-                </RemovableField>
-                <RemovableField>
-                    <input name ='subtask-2' className={`${modalStyles.input} ${styles.subTask}`} placeholder='e.g. Drink coffee & smile' />
-                </RemovableField>
+                {subtasks.map(subtask => (
+                    <RemovableField key={subtask.id} removeField={removeSubtask} id={subtask.id}>
+                        <input 
+                            type='text'
+                            name={`subtask-${subtask.id}`}
+                            id={`subtask-${subtask.id}`}
+                            className={modalStyles.input} 
+                            placeholder='e.g. Make coffee'
+                        />
+                    </RemovableField>
+                ))} 
+                </div>
+                : ''
+            }
+            <div className={modalStyles.section}>
+                <button 
+                    type='button'
+                    onClick={addSubtask}
+                    className={`
+                        ${buttonStyles.button}
+                        ${buttonStyles.button__fadedPurple} 
+                        ${buttonStyles.button__height40}
+                        ${buttonStyles.button__isInModal}
+                    `}
+                >
+                    + Add New Subtask
+                </button>
             </div>
             <div className={modalStyles.section}>
                 <div className={modalStyles.label}>Status</div>

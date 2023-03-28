@@ -5,7 +5,7 @@ import buttonStyles from '../styles/button.module.scss';
 interface RemovableFieldProps {
     children: ReactNode;
     id: number | string;
-    removeField: (id: string) => void;
+    removeField: (id: number) => void;
 }
 
 export function RemovableField(props: RemovableFieldProps) {

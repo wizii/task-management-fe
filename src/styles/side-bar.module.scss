@@ -11,8 +11,17 @@
     flex-direction: column;
     align-items: center;
     border-right: 1px solid #E4EBFA;
-    padding: 33px 24px 47px 24px;
+    padding-top: 33px;
+    padding-right: 20px;
     background-color: #FFF;
+
+    @media (min-width: 376px) and (max-width: 1139px) {
+        width: 260px;
+    }
+
+    @media (max-width: 375px) {
+        display: none;
+    }
 }
 
 .sidebar_footer {

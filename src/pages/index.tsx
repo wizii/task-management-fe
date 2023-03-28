@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Styles from '../styles/index.module.css';
+import Styles from '../styles/index.module.scss';
 import { SideBar } from '../components/side-bar';
 import { BoardHeader } from '../components/board-header';
 import { Board } from '../components/board';
@@ -17,7 +17,7 @@ import AddBoardModal from '@/components/add-board-modal';
 import AddColumnModal from '@/components/add-column-modal';
 import { DeleteTaskModal } from '@/components/delete-task-modal';
 
-// TODO: responsive, error handling, (layout and routes), useEffect dependencies, createColumns in create board, deleting all boards (empty)?
+// TODO: responsive, error handling, (layout and routes), useEffect dependencies, deleting all boards (empty)?
 export default function Home() {
   const [boards, setBoards] = useState<BoardModel[]>([]);
   const [activeBoard, setActiveBoard] = useState<BoardModel[]>({});
@@ -216,11 +216,11 @@ function handleSelectedBoard(id: number) {
       </Head>
     <div className={Styles.container}>
         <SideBar boards={boards} toggleSideBar={toggleSideBar} handleOpenAddBoardModal={openAddBoardModal} activeBoardId={activeBoardId} handleSelectedBoard={handleSelectedBoard}></SideBar>
-        <div className={Styles.boardContainer}>
+        <div className={`${Styles.boardContainer} ${!isSideBarVisible ? Styles.boardContainer__fullWidth : ''}`}>
             <BoardHeader isSideBarVisibile={isSideBarVisible} boardName={activeBoard.name} handleAddTask={openAddTaskModal} currentBoardHasColumns={!!columns.length}></BoardHeader>
             <div className={Styles.board}>
               {columns.length ? 
-                <Board name={activeBoard.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
+                <Board isSideBarVisible={isSideBarVisible} name={activeBoard.name} columns={getColumnsWithTasks()} handleOpenTaskModal={openTaskModal} handleOpenAddColumnModal={openAddColumnModal}></Board>
                 :
                 <EmptyBoard handleAddColumn={openAddColumnModal}></EmptyBoard>
               }
